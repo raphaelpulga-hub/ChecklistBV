@@ -28,13 +28,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:
 /* ── SCREENS ── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:block;}
+#screenLogin.active{display:flex !important;}
 
 /* ══════════════════════════════════
    LOGIN
 ══════════════════════════════════ */
 #screenLogin{
   background:var(--accent);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex-direction:column;align-items:center;justify-content:center;
   padding:32px 24px;
 }
 .login-logo{
@@ -443,11 +444,12 @@ const pads = { CI:{hasMark:false,ctx:null}, CO:{hasMark:false,ctx:null} };
 window.addEventListener('DOMContentLoaded', () => {
   loadData();
 
-  // Seed default admin if no users exist
-  if (!users.length) {
+  // Seed default admin if no users exist — runs EVERY time to ensure it exists
+  if (!users.find(u => u.login === 'admin')) {
     users.push({ login:'admin', nome:'Administrador', role:'adm', pass:'admin123' });
     saveUsers();
   }
+  console.log('Users loaded:', users.map(u=>u.login));
 
   // Restore session
   const saved = sessionStorage.getItem(SK_SESSION);
