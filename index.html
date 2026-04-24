@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Checklist — Churrasqueiras</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --card: #1e2336;
+    --border: #2a3050;
+    --accent: #f0a500;
+    --accent2: #e05c00;
+    --text: #eef0f7;
+    --muted: #7a8099;
+    --danger: #e05050;
+    --success: #3db87a;
+    --radius: 14px;
+    --font-body: 'DM Sans', sans-serif;
+    --font-display: 'DM Serif Display', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ── HEADER ── */
+  .top-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .top-bar .icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .top-bar h1 { font-family: var(--font-display); font-size: 19px; line-height: 1.2; }
+  .top-bar p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── STEPS ── */
+  .steps {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    margin: 20px 0 0;
+  }
+  .step-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity .3s;
+  }
+  .step-item.active, .step-item.done { opacity: 1; }
+  .step-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    transition: all .3s;
+    position: relative;
+    z-index: 1;
+  }
+  .step-item.active .step-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #000;
+  }
+  .step-item.done .step-dot {
+    border-color: var(--success);
+    background: var(--success);
+    color: #fff;
+  }
+  .step-label { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
+  .step-item.active .step-label { color: var(--accent); }
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    margin-top: 16px;
+    transition: background .3s;
+  }
+  .step-line.done { background: var(--success); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 20px; }
+  .section.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .section-subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  /* ── CARDS / FIELDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  input[type=text], input[type=date], input[type=time], input[type=number], select, textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color .2s;
+    margin-bottom: 14px;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+  select option { background: var(--card); }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row2 input, .row2 select { margin-bottom: 0; }
+
+  /* ── CHECKLIST ITEMS ── */
+  .check-group { margin-bottom: 18px; }
+  .check-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 0 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-left { flex: 1; }
+  .check-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .check-obs { font-size: 12px; color: var(--muted); font-style: italic; }
+
+  .status-btns { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+  .status-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .status-btn.ok.selected { background: rgba(61,184,122,.15); border-color: var(--success); color: var(--success); }
+  .status-btn.nok.selected { background: rgba(224,80,80,.15); border-color: var(--danger); color: var(--danger); }
+  .status-btn.na.selected { background: rgba(122,128,153,.15); border-color: var(--muted); color: var(--muted); }
+
+  .obs-input { margin-top: 8px; display: none; }
+  .obs-input.visible { display: block; }
+  .obs-input input { margin-bottom: 0; font-size: 13px; padding: 8px 12px; }
+
+  /* ── SIGNATURE PAD ── */
+  .sig-wrap {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .sig-wrap canvas {
+    display: block;
+    width: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+  .sig-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-size: 14px;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  .sig-placeholder.hidden { opacity: 0; }
+  .sig-actions { display: flex; gap: 8px; }
+  .btn-clear {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 9px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity .2s, transform .1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary:active { transform: scale(.98); opacity: .9; }
+  .btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background .2s;
+  }
+  .btn-secondary:hover { background: var(--card); }
+
+  /* ── SUMMARY ── */
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    font-size: 14px;
+    gap: 10px;
+  }
+  .summary-item:last-child { border: none; }
+  .summary-key { color: var(--muted); flex-shrink: 0; }
+  .summary-val { font-weight: 500; text-align: right; word-break: break-word; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.ok { background: rgba(61,184,122,.15); color: var(--success); }
+  .badge.nok { background: rgba(224,80,80,.15); color: var(--danger); }
+  .badge.na { background: rgba(122,128,153,.15); color: var(--muted); }
+
+  .whatsapp-btn {
+    background: #25D366;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    transition: opacity .2s;
+  }
+  .whatsapp-btn:active { opacity: .85; }
+
+  .alert {
+    background: rgba(240,165,0,.1);
+    border: 1px solid rgba(240,165,0,.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 4px;
+    height: 4px;
+    margin: 16px 0 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .4s ease;
+  }
+
+  /* phone config */
+  .config-note {
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+  .config-note strong { color: var(--accent); }
+
+  /* print */
+  @media print {
+    .top-bar, .steps, .btn-primary, .btn-secondary, .whatsapp-btn, .status-btns, .btn-clear { display: none !important; }
+    body { background: white; color: black; }
+    .section { display: block !important; }
+    .card { border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CONFIG: Edit phone number here -->
+<script>
+  const ADM_WHATSAPP = "5521999999999"; // ← EDITE: DDD + número da administração
+  const ESPACOS = [
+    "Churrasqueira 01",
+    "Churrasqueira 02",
+    "Churrasqueira 03",
+    "Churrasqueira 04 (cap. 30 pessoas)",
+  ];
+  const CHECKLIST_ITEMS = [
+    { group: "Estrutura", items: ["Paredes / alvenaria", "Piso", "Teto / cobertura", "Portas e janelas", "Iluminação geral"] },
+    { group: "Mobiliário", items: ["Mesa(s)", "Cadeiras", "Bancada / pia", "Armários / prateleiras"] },
+    { group: "Equipamentos", items: ["Churrasqueira / grelha", "Geladeira", "Forno / micro-ondas", "Caixas de som instaladas", "Tomadas e interruptores"] },
+    { group: "Utensílios", items: ["Espetos e ferramentas", "Tábuas de corte", "Pegadores / luvas"] },
+    { group: "Higiene e limpeza", items: ["Limpeza geral do espaço", "Lixeiras com tampa", "Pia / torneiras funcionando"] },
+  ];
+</script>
+
+<div class="top-bar">
+  <div class="icon">🏠</div>
+  <div>
+    <h1>Checklist de Locação</h1>
+    <p>Áreas comuns — Condomínio</p>
+  </div>
+</div>
+
+<!-- STEP INDICATORS -->
+<div class="steps" id="stepsBar">
+  <div class="step-item active" id="si0">
+    <div class="step-dot">1</div>
+    <div class="step-label">Reserva</div>
+  </div>
+  <div class="step-line" id="sl0"></div>
+  <div class="step-item" id="si1">
+    <div class="step-dot">2</div>
+    <div class="step-label">Check-in</div>
+  </div>
+  <div class="step-line" id="sl1"></div>
+  <div class="step-item" id="si2">
+    <div class="step-dot">3</div>
+    <div class="step-label">Check-out</div>
+  </div>
+  <div class="step-line" id="sl2"></div>
+  <div class="step-item" id="si3">
+    <div class="step-dot">4</div>
+    <div class="step-label">Enviar</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 0 — DADOS DA RESERVA
+════════════════════════════════════════════ -->
+<div class="section active" id="step0">
+  <div class="section-title">Dados da Reserva</div>
+  <div class="section-subtitle">Preencha com o morador antes de entregar o espaço.</div>
+
+  <div class="config-note">
+    ⚙️ <strong>Para configurar:</strong> edite o número de WhatsApp da administração no topo do arquivo HTML (<code>ADM_WHATSAPP</code>).
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Espaço e Data</div>
+    <label>Espaço reservado</label>
+    <select id="espaco"></select>
+    <div class="row2">
+      <div>
+        <label>Data do evento</label>
+        <input type="date" id="dataEvento">
+      </div>
+      <div>
+        <label>Bloco</label>
+        <input type="text" id="bloco" placeholder="Ex: B">
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label>Início</label>
+        <input type="time" id="horaInicio">
+      </div>
+      <div>
+        <label>Término</label>
+        <input type="time" id="horaFim">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👤 Morador Responsável</div>
+    <label>Nome completo</label>
+    <input type="text" id="nomeResp" placeholder="Nome legível">
+    <label>Apartamento</label>
+    <input type="text" id="apartamento" placeholder="Ex: 302">
+    <label>Nº de convidados</label>
+    <input type="number" id="qtdConvidados" placeholder="Ex: 20" min="1">
+  </div>
+
+  <div class="card">
+    <div class="card-title">🛡️ Zelador Responsável</div>
+    <label>Nome do zelador (check-in)</label>
+    <input type="text" id="zeladorCheckin" placeholder="Nome do zelador">
+  </div>
+
+  <div class="alert">
+    ⚠️ Lembre ao morador: <strong>não é permitido decoração, botijão de gás, instrumentos musicais ao vivo nem equipamentos sonoros externos.</strong> Capacidade máxima conforme espaço.
+  </div>
+
+  <button class="btn-primary" onclick="goStep(1)">▶ Iniciar Check-in →</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 1 — CHECK-IN
+════════════════════════════════════════════ -->
+<div class="section" id="step1">
+  <div class="section-title">Check-in</div>
+  <div class="section-subtitle">Inspecione cada item junto ao morador e registre o estado atual.</div>
+
+  <div id="checklistContainer"></div>
+
+  <div class="card">
+    <div class="card-title">📝 Observações gerais (check-in)</div>
+    <textarea id="obsCheckin" placeholder="Registre aqui qualquer dano ou ausência não coberta na lista acima..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Assinatura do Morador — Recebimento</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Assine abaixo confirmando o recebimento do espaço.</p>
+    <div class="sig-wrap">
+      <canvas id="sigCheckin" height="160"></canvas>
+      <div class="sig-placeholder" id="phCheckin">Assine aqui com o dedo</div>
+    </div>
+    <div class="sig-actions">
+      <button class="btn-clear" onclick="clearSig('sigCheckin','phCheckin')">🗑 Limpar assinatura</button>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="goStep(2)">▶ Ir para Check-out →</button>
+  <button class="btn-secondary" onclick="goStep(0)">← Voltar</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 2 — CHECK-OUT
+════════════════════════════════════════════ -->
+<div class="section" id="step2">
+  <div class="section-title">Check-out</div>
+  <div class="section-subtitle">Registre o estado do espaço na devolução.</div>
+
+  <div class="card">
+    <div class="card-title">🛡️ Zelador Responsável (check-out)</div>
+    <label>Nome do zelador (check-out)</label>
+    <input type="text" id="zeladorCheckout" placeholder="Nome do zelador">
+    <div class="row2">
+      <div>
+        <label>Horário de entrega</label>
+        <input type="time" id="horaCheckout">
+      </div>
+    </div>
+  </div>
+
+  <div id="checklistContainerOut"></div>
+
+  <div class="card">
+    <div class="card-title">📝 Observações gerais (check-out)</div>
+    <textarea id="obsCheckout" placeholder="Registre danos, itens em falta, sujeira, etc..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Assinatura do Morador — Devolução</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Assine abaixo confirmando a entrega do espaço.</p>
+    <div class="sig-wrap">
+      <canvas id="sigCheckout" height="160"></canvas>
+      <div class="sig-placeholder" id="phCheckout">Assine aqui com o dedo</div>
+    </div>
+    <div class="sig-actions">
+      <button class="btn-clear" onclick="clearSig('sigCheckout','phCheckout')">🗑 Limpar assinatura</button>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="goStep(3)">▶ Revisar e Enviar →</button>
+  <button class="btn-secondary" onclick="goStep(1)">← Voltar</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 3 — RESUMO + WHATSAPP
+════════════════════════════════════════════ -->
+<div class="section" id="step3">
+  <div class="section-title">Resumo do Registro</div>
+  <div class="section-subtitle">Revise as informações antes de enviar à administração.</div>
+
+  <div class="card" id="summaryReserva"></div>
+  <div class="card" id="summaryCheckin"></div>
+  <div class="card" id="summaryCheckout"></div>
+
+  <div class="card">
+    <div class="card-title">🖊️ Assinaturas Registradas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Check-in</div>
+        <img id="prevCheckin" style="width:100%;border-radius:8px;border:1px solid var(--border);">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Check-out</div>
+        <img id="prevCheckout" style="width:100%;border-radius:8px;border:1px solid var(--border);">
+      </div>
+    </div>
+  </div>
+
+  <button class="whatsapp-btn" id="waBtnFinal" onclick="sendWhatsApp()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Enviar para Administração
+  </button>
+
+  <button class="btn-secondary" onclick="goStep(2)">← Voltar ao check-out</button>
+  <button class="btn-secondary" onclick="novaReserva()" style="margin-top:6px;color:var(--accent);border-color:var(--accent);">🔄 Novo Registro</button>
+</div>
+
+<script>
+// ── populate selects ──
+const selEsp = document.getElementById('espaco');
+ESPACOS.forEach(e => { const o = document.createElement('option'); o.textContent = e; selEsp.appendChild(o); });
+
+// ── set today as default date ──
+document.getElementById('dataEvento').valueAsDate = new Date();
+
+// ── current step ──
+let currentStep = 0;
+const TOTAL = 4;
+
+function goStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+  document.getElementById('step'+currentStep).classList.remove('active');
+  document.getElementById('si'+currentStep).classList.remove('active');
+  document.getElementById('si'+currentStep).classList.add('done');
+  if (currentStep < 3) document.getElementById('sl'+currentStep).classList.add('done');
+
+  currentStep = n;
+  document.getElementById('step'+n).classList.add('active');
+  document.getElementById('si'+n).classList.add('active');
+  document.getElementById('si'+n).classList.remove('done');
+
+  if (n === 3) buildSummary();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function validateStep(s) {
+  if (s === 0) {
+    if (!document.getElementById('nomeResp').value.trim()) { alert('Informe o nome do morador.'); return false; }
+    if (!document.getElementById('apartamento').value.trim()) { alert('Informe o apartamento.'); return false; }
+    if (!document.getElementById('zeladorCheckin').value.trim()) { alert('Informe o nome do zelador.'); return false; }
+  }
+  return true;
+}
+
+// ══════════════════════════════════════
+// CHECKLIST BUILDER
+// ══════════════════════════════════════
+const ciState = {}; // check-in
+const coState = {}; // check-out
+
+function buildChecklist(containerId, stateObj, prefix) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  CHECKLIST_ITEMS.forEach(grp => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-title">📦 ${grp.group}</div>`;
+    grp.items.forEach(item => {
+      const key = prefix + '_' + grp.group + '_' + item;
+      stateObj[key] = stateObj[key] || { status: null, obs: '' };
+      const div = document.createElement('div');
+      div.className = 'check-item';
+      div.innerHTML = `
+        <div class="check-left">
+          <div class="check-name">${item}</div>
+          <div class="obs-input" id="obs_wrap_${key}">
+            <input type="text" id="obs_${key}" placeholder="Observação..." value="${stateObj[key].obs}" oninput="stateObj['${key}'].obs=this.value">
+          </div>
+        </div>
+        <div class="status-btns">
+          <button class="status-btn ok ${stateObj[key].status==='ok'?'selected':''}" title="OK" onclick="setStatus('${key}','ok',this,${JSON.stringify(stateObj).replace(/'/g,"&#39;")})">✓</button>
+          <button class="status-btn nok ${stateObj[key].status==='nok'?'selected':''}" title="Dano/Falta" onclick="setStatus('${key}','nok',this)">✗</button>
+          <button class="status-btn na ${stateObj[key].status==='na'?'selected':''}" title="N/A" onclick="setStatus('${key}','na',this)">—</button>
+        </div>`;
+      card.appendChild(div);
+      // bind obs field
+      div.querySelectorAll('.status-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const s = this.classList.contains('ok') ? 'ok' : this.classList.contains('nok') ? 'nok' : 'na';
+          stateObj[key].status = s;
+          div.querySelectorAll('.status-btn').forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+          const wrap = document.getElementById('obs_wrap_'+key);
+          if (s === 'nok') { wrap.classList.add('visible'); }
+          else { wrap.classList.remove('visible'); stateObj[key].obs = ''; }
+        });
+      });
+      card.appendChild(div);
+    });
+    container.appendChild(card);
+  });
+}
+
+// build both checklists on load
+buildChecklist('checklistContainer', ciState, 'ci');
+buildChecklist('checklistContainerOut', coState, 'co');
+
+// ══════════════════════════════════════
+// SIGNATURE PADS
+// ══════════════════════════════════════
+function initSig(canvasId, phId) {
+  const canvas = document.getElementById(canvasId);
+  const ph = document.getElementById(phId);
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / r.width;
+    const scaleY = canvas.height / r.height;
+    if (e.touches) return { x: (e.touches[0].clientX - r.left) * scaleX, y: (e.touches[0].clientY - r.top) * scaleY };
+    return { x: (e.clientX - r.left) * scaleX, y: (e.clientY - r.top) * scaleY };
+  }
+
+  function resize() {
+    const w = canvas.parentElement.clientWidth;
+    canvas.width = w * devicePixelRatio || w;
+    canvas.height = 160 * (devicePixelRatio || 1);
+    canvas.style.height = '160px';
+  }
+  resize();
+
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  canvas.addEventListener('mousedown', e => { drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); ph.classList.add('hidden'); });
+  canvas.addEventListener('mousemove', e => { if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
+  canvas.addEventListener('mouseup', ()=>drawing=false);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); ph.classList.add('hidden'); }, {passive:false});
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }, {passive:false});
+  canvas.addEventListener('touchend', ()=>drawing=false);
+}
+
+function clearSig(canvasId, phId) {
+  const canvas = document.getElementById(canvasId);
+  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  document.getElementById(phId).classList.remove('hidden');
+}
+
+initSig('sigCheckin','phCheckin');
+initSig('sigCheckout','phCheckout');
+
+// ══════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════
+function buildSummary() {
+  // reserva
+  const sr = document.getElementById('summaryReserva');
+  sr.innerHTML = `<div class="card-title">📋 Dados da Reserva</div>`;
+  const reservaData = [
+    ['Espaço', document.getElementById('espaco').value],
+    ['Data', document.getElementById('dataEvento').value],
+    ['Bloco / Apto', (document.getElementById('bloco').value||'—') + ' / ' + (document.getElementById('apartamento').value||'—')],
+    ['Horário', (document.getElementById('horaInicio').value||'—') + ' às ' + (document.getElementById('horaFim').value||'—')],
+    ['Morador', document.getElementById('nomeResp').value],
+    ['Convidados', document.getElementById('qtdConvidados').value || '—'],
+    ['Zelador check-in', document.getElementById('zeladorCheckin').value],
+  ];
+  reservaData.forEach(([k,v]) => {
+    sr.innerHTML += `<div class="summary-item"><span class="summary-key">${k}</span><span class="summary-val">${v}</span></div>`;
+  });
+
+  // checkin problems
+  const sc = document.getElementById('summaryCheckin');
+  sc.innerHTML = `<div class="card-title">📥 Check-in — Ocorrências</div>`;
+  let ciProblems = [];
+  Object.entries(ciState).forEach(([key, val]) => {
+    if (val.status === 'nok') {
+      const parts = key.replace('ci_','').split('_');
+      ciProblems.push(`<div class="summary-item"><span class="summary-key">${parts.slice(1).join(' ')}</span><span class="summary-val"><span class="badge nok">Dano/Falta</span> ${val.obs?'— '+val.obs:''}</span></div>`);
+    }
+  });
+  if (ciProblems.length === 0) sc.innerHTML += `<div class="summary-item"><span style="color:var(--success)">✓ Nenhuma ocorrência no check-in</span></div>`;
+  else sc.innerHTML += ciProblems.join('');
+  if (document.getElementById('obsCheckin').value) sc.innerHTML += `<div class="summary-item"><span class="summary-key">Obs. gerais</span><span class="summary-val">${document.getElementById('obsCheckin').value}</span></div>`;
+
+  // checkout problems
+  const sco = document.getElementById('summaryCheckout');
+  sco.innerHTML = `<div class="card-title">📤 Check-out — Ocorrências</div>`;
+  let coProblems = [];
+  Object.entries(coState).forEach(([key, val]) => {
+    if (val.status === 'nok') {
+      const parts = key.replace('co_','').split('_');
+      coProblems.push(`<div class="summary-item"><span class="summary-key">${parts.slice(1).join(' ')}</span><span class="summary-val"><span class="badge nok">Dano/Falta</span> ${val.obs?'— '+val.obs:''}</span></div>`);
+    }
+  });
+  if (coProblems.length === 0) sco.innerHTML += `<div class="summary-item"><span style="color:var(--success)">✓ Nenhuma ocorrência no check-out</span></div>`;
+  else sco.innerHTML += coProblems.join('');
+  sco.innerHTML += `<div class="summary-item"><span class="summary-key">Zelador check-out</span><span class="summary-val">${document.getElementById('zeladorCheckout').value||'—'}</span></div>`;
+  sco.innerHTML += `<div class="summary-item"><span class="summary-key">Horário entrega</span><span class="summary-val">${document.getElementById('horaCheckout').value||'—'}</span></div>`;
+  if (document.getElementById('obsCheckout').value) sco.innerHTML += `<div class="summary-item"><span class="summary-key">Obs. gerais</span><span class="summary-val">${document.getElementById('obsCheckout').value}</span></div>`;
+
+  // sig previews
+  document.getElementById('prevCheckin').src = document.getElementById('sigCheckin').toDataURL();
+  document.getElementById('prevCheckout').src = document.getElementById('sigCheckout').toDataURL();
+}
+
+// ══════════════════════════════════════
+// WHATSAPP SENDER
+// ══════════════════════════════════════
+function sendWhatsApp() {
+  const esp = document.getElementById('espaco').value;
+  const data = document.getElementById('dataEvento').value;
+  const morador = document.getElementById('nomeResp').value;
+  const apto = document.getElementById('apartamento').value;
+  const bloco = document.getElementById('bloco').value;
+  const convidados = document.getElementById('qtdConvidados').value;
+  const zelIn = document.getElementById('zeladorCheckin').value;
+  const zelOut = document.getElementById('zeladorCheckout').value;
+  const hCheckout = document.getElementById('horaCheckout').value;
+
+  let problems = [];
+  Object.entries(coState).forEach(([key, val]) => {
+    if (val.status === 'nok') {
+      const parts = key.replace('co_','').split('_').slice(1).join(' ');
+      problems.push(`  ⚠️ ${parts}${val.obs?' — '+val.obs:''}`);
+    }
+  });
+
+  let msg = `🏠 *CHECKLIST DE LOCAÇÃO — CONCLUÍDO*\n`;
+  msg += `──────────────────────\n`;
+  msg += `📍 *Espaço:* ${esp}\n`;
+  msg += `📅 *Data:* ${data}\n`;
+  msg += `👤 *Morador:* ${morador}\n`;
+  msg += `🏢 *Bloco/Apto:* ${bloco||'?'} / ${apto}\n`;
+  msg += `👥 *Convidados:* ${convidados||'?'}\n`;
+  msg += `🕐 *Entrega:* ${hCheckout||'—'}\n`;
+  msg += `🛡️ *Zelador (in):* ${zelIn||'—'}\n`;
+  msg += `🛡️ *Zelador (out):* ${zelOut||'—'}\n`;
+  msg += `──────────────────────\n`;
+  if (problems.length > 0) {
+    msg += `🔴 *OCORRÊNCIAS NO CHECK-OUT:*\n`;
+    msg += problems.join('\n') + '\n';
+  } else {
+    msg += `✅ *Sem ocorrências no check-out.*\n`;
+  }
+  const obsOut = document.getElementById('obsCheckout').value;
+  if (obsOut) msg += `📝 *Obs.:* ${obsOut}\n`;
+  msg += `──────────────────────\n`;
+  msg += `_Registro gerado pelo sistema de checklist._`;
+
+  const url = `https://wa.me/${ADM_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+function novaReserva() {
+  if (!confirm('Iniciar um novo registro? Os dados atuais serão perdidos.')) return;
+  location.reload();
+}
+</script>
+</body>
+</html>
