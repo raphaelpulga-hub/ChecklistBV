@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Checklist — Churrasqueiras</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --card: #1e2336;
+    --border: #2a3050;
+    --accent: #f0a500;
+    --accent2: #e05c00;
+    --text: #eef0f7;
+    --muted: #7a8099;
+    --danger: #e05050;
+    --success: #3db87a;
+    --radius: 14px;
+    --font-body: 'DM Sans', sans-serif;
+    --font-display: 'DM Serif Display', serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* HEADER */
+  .top-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .top-bar .icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .top-bar h1 { font-family: var(--font-display); font-size: 18px; line-height: 1.2; }
+  .top-bar p  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .save-badge {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity .4s;
+    flex-shrink: 0;
+  }
+  .save-badge.show { opacity: 1; }
+
+  /* RESTORE BANNER */
+  .restore-banner {
+    display: none;
+    background: rgba(61,184,122,.1);
+    border: 1px solid rgba(61,184,122,.3);
+    border-radius: 12px;
+    margin: 16px 20px 0;
+    padding: 14px 16px;
+    gap: 10px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .restore-banner.show { display: flex; }
+  .restore-banner p { flex: 1; font-size: 13px; color: var(--success); line-height: 1.5; min-width: 140px; }
+  .restore-banner strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  .rb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .restore-btn {
+    background: var(--success); color: #fff;
+    border: none; border-radius: 9px;
+    padding: 9px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: var(--font-body);
+  }
+  .dismiss-btn {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 9px;
+    padding: 9px 12px; font-size: 13px;
+    cursor: pointer; font-family: var(--font-body);
+  }
+
+  /* STEPS */
+  .steps { display: flex; padding: 0 20px; margin: 18px 0 0; }
+  .step-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 5px; opacity: 0.4; transition: opacity .3s;
+  }
+  .step-item.active, .step-item.done { opacity: 1; }
+  .step-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; transition: all .3s;
+  }
+  .step-item.active .step-dot { border-color: var(--accent); background: var(--accent); color: #000; }
+  .step-item.done  .step-dot  { border-color: var(--success); background: var(--success); color: #fff; }
+  .step-label { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.2; }
+  .step-item.active .step-label { color: var(--accent); }
+  .step-line { flex: 1; height: 2px; background: var(--border); margin-top: 15px; transition: background .3s; }
+  .step-line.done { background: var(--success); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 20px; }
+  .section.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .section-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 6px; }
+  .section-subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  input[type=text], input[type=date], input[type=time], input[type=number], select, textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 9px; color: var(--text); font-family: var(--font-body);
+    font-size: 15px; padding: 11px 14px; outline: none;
+    transition: border-color .2s; margin-bottom: 14px; -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+  select option { background: var(--card); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row2 > div { display: flex; flex-direction: column; }
+  .row2 input, .row2 select { margin-bottom: 0; flex: 1; }
+
+  /* CHECKLIST */
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .check-item:last-child { border-bottom: none; }
+  .check-left { flex: 1; }
+  .check-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .status-btns { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+  .status-btn {
+    width: 38px; height: 38px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--muted); font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .15s; flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .status-btn.ok.selected  { background: rgba(61,184,122,.15); border-color: var(--success); color: var(--success); }
+  .status-btn.nok.selected { background: rgba(224,80,80,.15);  border-color: var(--danger);  color: var(--danger); }
+  .status-btn.na.selected  { background: rgba(122,128,153,.15); border-color: var(--muted);  color: var(--muted); }
+  .obs-field { margin-top: 8px; display: none; }
+  .obs-field.visible { display: block; }
+  .obs-field input { margin-bottom: 0; font-size: 13px; padding: 8px 12px; }
+
+  /* SIGNATURE — key fix: wrapper has explicit height, canvas fills it absolutely */
+  .sig-wrap {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    touch-action: none;
+  }
+  .sig-wrap canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    touch-action: none;
+    display: block;
+  }
+  .sig-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #bbb; font-size: 14px; pointer-events: none;
+    font-family: var(--font-body); transition: opacity .2s;
+  }
+  .sig-placeholder.hidden { opacity: 0; }
+  .sig-actions { display: flex; gap: 8px; margin-bottom: 4px; }
+  .btn-clear {
+    flex: 1; padding: 10px; background: var(--bg);
+    border: 1px solid var(--border); color: var(--muted);
+    border-radius: 9px; font-size: 13px; cursor: pointer; font-family: var(--font-body);
+  }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 12px; color: #000;
+    font-family: var(--font-body); font-size: 16px; font-weight: 600;
+    cursor: pointer; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:active { opacity: .85; }
+  .btn-secondary {
+    width: 100%; padding: 14px; background: transparent;
+    border: 1px solid var(--border); border-radius: 12px; color: var(--text);
+    font-family: var(--font-body); font-size: 15px;
+    cursor: pointer; margin-top: 8px;
+  }
+
+  /* SUMMARY */
+  .summary-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 14px; gap: 10px; }
+  .summary-item:last-child { border: none; }
+  .summary-key { color: var(--muted); flex-shrink: 0; }
+  .summary-val { font-weight: 500; text-align: right; word-break: break-word; }
+  .badge.nok { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: rgba(224,80,80,.15); color: var(--danger); }
+
+  .whatsapp-btn {
+    background: #25D366; color: #fff; border: none; border-radius: 12px;
+    padding: 16px; font-size: 16px; font-weight: 600; font-family: var(--font-body);
+    cursor: pointer; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 10px;
+  }
+  .alert {
+    background: rgba(240,165,0,.1); border: 1px solid rgba(240,165,0,.3);
+    border-radius: 10px; padding: 12px 16px; font-size: 13px;
+    color: var(--accent); margin-bottom: 16px; line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const ADM_WHATSAPP = "5521999999999"; // ← edite: DDD + número sem espaços
+  const ESPACOS = [
+    "Churrasqueira 01",
+    "Churrasqueira 02",
+    "Churrasqueira 03",
+    "Churrasqueira 04 (cap. 30 pessoas)",
+  ];
+  const CHECKLIST_ITEMS = [
+    { group: "Estrutura",    items: ["Paredes / alvenaria", "Piso", "Teto / cobertura", "Portas e janelas", "Iluminação geral"] },
+    { group: "Mobiliário",   items: ["Mesa(s)", "Cadeiras", "Bancada / pia", "Armários / prateleiras"] },
+    { group: "Equipamentos", items: ["Churrasqueira / grelha", "Geladeira", "Forno / micro-ondas", "Caixas de som instaladas", "Tomadas e interruptores"] },
+    { group: "Utensílios",   items: ["Espetos e ferramentas", "Tábuas de corte", "Pegadores / luvas"] },
+    { group: "Higiene",      items: ["Limpeza geral", "Lixeiras com tampa", "Torneiras funcionando"] },
+  ];
+  const STORAGE_KEY = "checklist_cond_v3";
+</script>
+
+<!-- HEADER -->
+<div class="top-bar">
+  <div class="icon">🏠</div>
+  <div>
+    <h1>Checklist de Locação</h1>
+    <p>Áreas comuns — Condomínio</p>
+  </div>
+  <div class="save-badge" id="saveBadge">💾 Salvo</div>
+</div>
+
+<!-- RESTORE BANNER -->
+<div class="restore-banner" id="restoreBanner">
+  <p><strong>📂 Registro em andamento</strong><span id="restoreDesc"></span></p>
+  <div class="rb-btns">
+    <button class="restore-btn" onclick="restoreSession()">Retomar</button>
+    <button class="dismiss-btn" onclick="dismissRestore()">✕</button>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="steps">
+  <div class="step-item active" id="si0"><div class="step-dot">1</div><div class="step-label">Reserva</div></div>
+  <div class="step-line" id="sl0"></div>
+  <div class="step-item" id="si1"><div class="step-dot">2</div><div class="step-label">Check-in</div></div>
+  <div class="step-line" id="sl1"></div>
+  <div class="step-item" id="si2"><div class="step-dot">3</div><div class="step-label">Check-out</div></div>
+  <div class="step-line" id="sl2"></div>
+  <div class="step-item" id="si3"><div class="step-dot">4</div><div class="step-label">Enviar</div></div>
+</div>
+
+<!-- ════ STEP 0 ════ -->
+<div class="section active" id="step0">
+  <div class="section-title">Dados da Reserva</div>
+  <div class="section-subtitle">Preencha com o morador antes de entregar o espaço.</div>
+  <div class="card">
+    <div class="card-title">📋 Espaço e Data</div>
+    <label>Espaço reservado</label>
+    <select id="espaco"></select>
+    <div class="row2">
+      <div><label>Data do evento</label><input type="date" id="dataEvento"></div>
+      <div><label>Bloco</label><input type="text" id="bloco" placeholder="Ex: B"></div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="row2">
+      <div><label>Início</label><input type="time" id="horaInicio"></div>
+      <div><label>Término</label><input type="time" id="horaFim"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">👤 Morador Responsável</div>
+    <label>Nome completo</label>
+    <input type="text" id="nomeResp" placeholder="Nome legível">
+    <label>Apartamento</label>
+    <input type="text" id="apartamento" placeholder="Ex: 302">
+    <label>Nº de convidados</label>
+    <input type="number" id="qtdConvidados" placeholder="Ex: 20" min="1">
+  </div>
+  <div class="card">
+    <div class="card-title">🛡️ Zelador (check-in)</div>
+    <label>Nome do zelador</label>
+    <input type="text" id="zeladorCheckin" placeholder="Nome completo">
+  </div>
+  <div class="alert">⚠️ Lembre ao morador: <strong>proibido decoração, botijão de gás, instrumentos musicais ao vivo e equipamentos sonoros externos.</strong></div>
+  <button class="btn-primary" onclick="goStep(1)">▶ Iniciar Check-in</button>
+</div>
+
+<!-- ════ STEP 1 ════ -->
+<div class="section" id="step1">
+  <div class="section-title">Check-in</div>
+  <div class="section-subtitle">Inspecione cada item com o morador e registre o estado atual.</div>
+  <div id="clIn"></div>
+  <div class="card">
+    <div class="card-title">📝 Observações gerais</div>
+    <textarea id="obsCheckin" placeholder="Danos ou ausências não cobertos na lista..."></textarea>
+  </div>
+  <div class="card">
+    <div class="card-title">✍️ Assinatura — Recebimento</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Morador assina confirmando o recebimento do espaço.</p>
+    <div class="sig-wrap" id="wrapA">
+      <canvas id="canvasA"></canvas>
+      <div class="sig-placeholder" id="phA">✍ Assine aqui com o dedo</div>
+    </div>
+    <div class="sig-actions"><button class="btn-clear" onclick="clearSig('A')">🗑 Limpar assinatura</button></div>
+  </div>
+  <button class="btn-primary" onclick="goStep(2)">▶ Ir para Check-out</button>
+  <button class="btn-secondary" onclick="goStep(0)">← Voltar</button>
+</div>
+
+<!-- ════ STEP 2 ════ -->
+<div class="section" id="step2">
+  <div class="section-title">Check-out</div>
+  <div class="section-subtitle">Inspecione o espaço na devolução e registre as condições.</div>
+  <div class="card">
+    <div class="card-title">🛡️ Zelador (check-out)</div>
+    <label>Nome do zelador</label>
+    <input type="text" id="zeladorCheckout" placeholder="Nome completo">
+    <label>Horário de entrega</label>
+    <input type="time" id="horaCheckout">
+  </div>
+  <div id="clOut"></div>
+  <div class="card">
+    <div class="card-title">📝 Observações gerais</div>
+    <textarea id="obsCheckout" placeholder="Danos, itens em falta, sujeira..."></textarea>
+  </div>
+  <div class="card">
+    <div class="card-title">✍️ Assinatura — Devolução</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Morador assina confirmando a entrega do espaço.</p>
+    <div class="sig-wrap" id="wrapB">
+      <canvas id="canvasB"></canvas>
+      <div class="sig-placeholder" id="phB">✍ Assine aqui com o dedo</div>
+    </div>
+    <div class="sig-actions"><button class="btn-clear" onclick="clearSig('B')">🗑 Limpar assinatura</button></div>
+  </div>
+  <button class="btn-primary" onclick="goStep(3)">▶ Revisar e Enviar</button>
+  <button class="btn-secondary" onclick="goStep(1)">← Voltar</button>
+</div>
+
+<!-- ════ STEP 3 ════ -->
+<div class="section" id="step3">
+  <div class="section-title">Resumo</div>
+  <div class="section-subtitle">Revise antes de enviar à administração.</div>
+  <div class="card" id="sumReserva"></div>
+  <div class="card" id="sumCI"></div>
+  <div class="card" id="sumCO"></div>
+  <div class="card">
+    <div class="card-title">🖊️ Assinaturas coletadas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Check-in</div>
+        <img id="prevA" style="width:100%;border-radius:8px;border:1px solid var(--border);background:#fff;min-height:60px;">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Check-out</div>
+        <img id="prevB" style="width:100%;border-radius:8px;border:1px solid var(--border);background:#fff;min-height:60px;">
+      </div>
+    </div>
+  </div>
+  <button class="whatsapp-btn" onclick="sendWhatsApp()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Enviar para Administração
+  </button>
+  <button class="btn-secondary" onclick="goStep(2)">← Voltar ao check-out</button>
+  <button class="btn-secondary" onclick="novaReserva()" style="color:var(--accent);border-color:var(--accent);margin-top:6px;">🔄 Novo Registro</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let STEP = 0;
+const CI = {}; // check-in checklist state
+const CO = {}; // check-out checklist state
+const SIGS = { A: null, B: null }; // dataURLs for persistence
+
+// canvas rendering contexts + metadata
+const SIG = {
+  A: { drawing: false, hasMark: false, ctx: null },
+  B: { drawing: false, hasMark: false, ctx: null },
+};
+
+// ══════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', function() {
+  // populate space selector
+  const sel = document.getElementById('espaco');
+  ESPACOS.forEach(e => { const o = document.createElement('option'); o.textContent = e; sel.appendChild(o); });
+  document.getElementById('dataEvento').valueAsDate = new Date();
+
+  buildChecklist('clIn',  CI, 'ci');
+  buildChecklist('clOut', CO, 'co');
+
+  initSig('A');
+  initSig('B');
+
+  checkSaved();
+
+  // auto-save on any input
+  document.body.addEventListener('input', debounce(saveSession, 400));
+});
+
+function debounce(fn, ms) {
+  let t; return function(...a) { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); };
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function goStep(n) {
+  if (n > STEP && !validateStep(STEP)) return;
+
+  document.getElementById('step'+STEP).classList.remove('active');
+  document.getElementById('si'+STEP).classList.remove('active');
+  if (n > STEP) {
+    document.getElementById('si'+STEP).classList.add('done');
+    if (STEP < 3) document.getElementById('sl'+STEP).classList.add('done');
+  }
+
+  STEP = n;
+  document.getElementById('step'+n).classList.add('active');
+  document.getElementById('si'+n).classList.add('active');
+  document.getElementById('si'+n).classList.remove('done');
+
+  // re-calibrate signature canvas when its section becomes visible
+  if (n === 1) requestAnimationFrame(() => calibrateSig('A'));
+  if (n === 2) requestAnimationFrame(() => calibrateSig('B'));
+  if (n === 3) buildSummary();
+
+  saveSession();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(s) {
+  if (s === 0) {
+    if (!v('nomeResp'))       { alert('Informe o nome do morador.');  return false; }
+    if (!v('apartamento'))    { alert('Informe o apartamento.');       return false; }
+    if (!v('zeladorCheckin')) { alert('Informe o nome do zelador.');   return false; }
+  }
+  return true;
+}
+function v(id) { return document.getElementById(id).value.trim(); }
+
+// ══════════════════════════════════════════════
+// CHECKLIST
+// ══════════════════════════════════════════════
+function buildChecklist(containerId, state, prefix) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  CHECKLIST_ITEMS.forEach(grp => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-title">📦 ${grp.group}</div>`;
+    grp.items.forEach(item => {
+      const key = prefix + '|' + grp.group + '|' + item;
+      if (!state[key]) state[key] = { status: null, obs: '' };
+      const s = state[key];
+
+      const row = document.createElement('div');
+      row.className = 'check-item';
+      row.innerHTML = `
+        <div class="check-left">
+          <div class="check-name">${item}</div>
+          <div class="obs-field${s.status==='nok'?' visible':''}" id="of_${key}">
+            <input type="text" placeholder="Descreva o dano/falta..." value="${esc(s.obs)}" id="oi_${key}">
+          </div>
+        </div>
+        <div class="status-btns">
+          <button class="status-btn ok${s.status==='ok'?' selected':''}">✓</button>
+          <button class="status-btn nok${s.status==='nok'?' selected':''}">✗</button>
+          <button class="status-btn na${s.status==='na'?' selected':''}">—</button>
+        </div>`;
+      card.appendChild(row);
+
+      row.querySelector('#oi_'+key).addEventListener('input', function() {
+        state[key].obs = this.value;
+        saveSession();
+      });
+      row.querySelectorAll('.status-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const picked = this.classList.contains('ok') ? 'ok' : this.classList.contains('nok') ? 'nok' : 'na';
+          state[key].status = picked;
+          row.querySelectorAll('.status-btn').forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+          const of_ = document.getElementById('of_'+key);
+          const oi_ = document.getElementById('oi_'+key);
+          if (picked === 'nok') { of_.classList.add('visible'); }
+          else { of_.classList.remove('visible'); oi_.value = ''; state[key].obs = ''; }
+          saveSession();
+        });
+      });
+    });
+    container.appendChild(card);
+  });
+}
+
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+// ══════════════════════════════════════════════
+// SIGNATURE — mobile-safe implementation
+// The key insight: canvas pixel dimensions must match
+// its *rendered* CSS dimensions (getBoundingClientRect),
+// not the wrapper layout dimensions, to avoid coordinate drift.
+// We set pixel dims = CSS dims * devicePixelRatio, then scale ctx.
+// ══════════════════════════════════════════════
+function initSig(name) {
+  const canvas = document.getElementById('canvas'+name);
+  const ph     = document.getElementById('ph'+name);
+  const ctx    = canvas.getContext('2d');
+  SIG[name].ctx = ctx;
+
+  calibrateSig(name); // set initial size
+
+  function xy(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    // coordinates in CSS pixels (ctx already scaled)
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  }
+
+  function onStart(e) {
+    e.preventDefault();
+    SIG[name].drawing = true;
+    const p = xy(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ph.classList.add('hidden');
+  }
+  function onMove(e) {
+    e.preventDefault();
+    if (!SIG[name].drawing) return;
+    const p = xy(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    SIG[name].hasMark = true;
+  }
+  function onEnd(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    SIG[name].drawing = false;
+    if (SIG[name].hasMark) {
+      SIGS[name] = canvas.toDataURL();
+      saveSession();
+    }
+  }
+
+  canvas.addEventListener('mousedown',  onStart, { passive: false });
+  canvas.addEventListener('mousemove',  onMove,  { passive: false });
+  canvas.addEventListener('mouseup',    onEnd,   { passive: false });
+  canvas.addEventListener('mouseleave', onEnd,   { passive: false });
+  canvas.addEventListener('touchstart', onStart, { passive: false });
+  canvas.addEventListener('touchmove',  onMove,  { passive: false });
+  canvas.addEventListener('touchend',   onEnd,   { passive: false });
+}
+
+function calibrateSig(name) {
+  const canvas = document.getElementById('canvas'+name);
+  const wrap   = document.getElementById('wrap'+name);
+  const ctx    = SIG[name].ctx;
+  if (!ctx) return;
+
+  // snapshot current drawing before resize
+  const snap = SIG[name].hasMark ? canvas.toDataURL() : null;
+
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = wrap.clientWidth  || wrap.offsetWidth  || 320;
+  const cssH = wrap.clientHeight || wrap.offsetHeight || 160;
+
+  canvas.width  = cssW * dpr;
+  canvas.height = cssH * dpr;
+
+  // reset transform, then scale for DPR
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  // redraw snapshot if existed
+  if (snap) {
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, cssW, cssH);
+    img.src = snap;
+  }
+}
+
+function clearSig(name) {
+  const canvas = document.getElementById('canvas'+name);
+  const ph     = document.getElementById('ph'+name);
+  const ctx    = SIG[name].ctx;
+  const dpr    = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+  SIG[name].hasMark = false;
+  SIGS[name] = null;
+  ph.classList.remove('hidden');
+  saveSession();
+}
+
+function drawSigFromURL(name, dataURL) {
+  if (!dataURL) return;
+  const canvas = document.getElementById('canvas'+name);
+  const wrap   = document.getElementById('wrap'+name);
+  const ph     = document.getElementById('ph'+name);
+  const ctx    = SIG[name].ctx;
+  SIG[name].hasMark = true;
+  SIGS[name] = dataURL;
+  ph.classList.add('hidden');
+  const cssW = wrap.clientWidth  || 320;
+  const cssH = wrap.clientHeight || 160;
+  const img = new Image();
+  img.onload = () => ctx.drawImage(img, 0, 0, cssW, cssH);
+  img.src = dataURL;
+}
+
+// ══════════════════════════════════════════════
+// PERSISTENCE — localStorage
+// ══════════════════════════════════════════════
+function fields() {
+  return ['espaco','dataEvento','bloco','horaInicio','horaFim',
+          'nomeResp','apartamento','qtdConvidados',
+          'zeladorCheckin','zeladorCheckout','horaCheckout',
+          'obsCheckin','obsCheckout'];
+}
+
+function saveSession() {
+  try {
+    const form = {};
+    fields().forEach(id => { form[id] = document.getElementById(id)?.value || ''; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      step: STEP,
+      form,
+      ci: JSON.parse(JSON.stringify(CI)),
+      co: JSON.parse(JSON.stringify(CO)),
+      sigs: SIGS,
+      ts: Date.now(),
+    }));
+    flash();
+  } catch(e) {}
+}
+
+function flash() {
+  const b = document.getElementById('saveBadge');
+  b.classList.add('show');
+  clearTimeout(b._t);
+  b._t = setTimeout(() => b.classList.remove('show'), 1800);
+}
+
+function checkSaved() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (!d?.form?.nomeResp) return;
+    const age = (Date.now() - d.ts) / 3600000;
+    if (age > 24) { localStorage.removeItem(STORAGE_KEY); return; }
+    document.getElementById('restoreDesc').textContent =
+      `${d.form.nomeResp} — ${d.form.espaco} — ${d.form.dataEvento}`;
+    document.getElementById('restoreBanner').classList.add('show');
+  } catch(e) {}
+}
+
+function restoreSession() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!d) return;
+
+    // form fields
+    fields().forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = d.form[id] || '';
+    });
+
+    // checklist states — merge then rebuild UI
+    Object.assign(CI, d.ci || {});
+    Object.assign(CO, d.co || {});
+    buildChecklist('clIn',  CI, 'ci');
+    buildChecklist('clOut', CO, 'co');
+
+    // signatures
+    if (d.sigs) {
+      Object.assign(SIGS, d.sigs);
+      // delay to let canvases settle in the DOM
+      setTimeout(() => {
+        if (SIGS.A) drawSigFromURL('A', SIGS.A);
+        if (SIGS.B) drawSigFromURL('B', SIGS.B);
+      }, 200);
+    }
+
+    // navigate to saved step
+    const target = d.step || 0;
+    for (let i = 0; i < target; i++) {
+      document.getElementById('si'+i).classList.remove('active');
+      document.getElementById('si'+i).classList.add('done');
+      if (i < 3) document.getElementById('sl'+i).classList.add('done');
+    }
+    document.getElementById('step0').classList.remove('active');
+    STEP = target;
+    document.getElementById('step'+target).classList.add('active');
+    document.getElementById('si'+target).classList.add('active');
+
+    document.getElementById('restoreBanner').classList.remove('show');
+  } catch(e) { alert('Erro ao restaurar. Tente novamente.'); }
+}
+
+function dismissRestore() {
+  document.getElementById('restoreBanner').classList.remove('show');
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+// ══════════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════════
+function buildSummary() {
+  function row(k, val) {
+    return `<div class="summary-item"><span class="summary-key">${k}</span><span class="summary-val">${val||'—'}</span></div>`;
+  }
+
+  const sr = document.getElementById('sumReserva');
+  sr.innerHTML = '<div class="card-title">📋 Dados da Reserva</div>'
+    + row('Espaço',       v('espaco') || document.getElementById('espaco').value)
+    + row('Data',         document.getElementById('dataEvento').value)
+    + row('Bloco / Apto', (document.getElementById('bloco').value||'?') + ' / ' + document.getElementById('apartamento').value)
+    + row('Horário',      (document.getElementById('horaInicio').value||'—') + ' às ' + (document.getElementById('horaFim').value||'—'))
+    + row('Morador',      document.getElementById('nomeResp').value)
+    + row('Convidados',   document.getElementById('qtdConvidados').value)
+    + row('Zelador in',   document.getElementById('zeladorCheckin').value);
+
+  function occurrences(state, prefix, obs) {
+    const probs = Object.entries(state).filter(([,x])=>x.status==='nok');
+    let html = '';
+    if (!probs.length) html += '<div class="summary-item" style="color:var(--success)">✓ Sem ocorrências</div>';
+    else probs.forEach(([k,x]) => {
+      const label = k.replace(prefix+'|','').replace('|',' › ');
+      html += `<div class="summary-item"><span class="summary-key">${label}</span><span class="summary-val"><span class="badge nok">Dano/Falta</span>${x.obs?' — '+x.obs:''}</span></div>`;
+    });
+    if (obs) html += row('Obs.', obs);
+    return html;
+  }
+
+  document.getElementById('sumCI').innerHTML  = '<div class="card-title">📥 Check-in</div>'  + occurrences(CI, 'ci', document.getElementById('obsCheckin').value);
+  document.getElementById('sumCO').innerHTML  = '<div class="card-title">📤 Check-out</div>' + occurrences(CO, 'co', document.getElementById('obsCheckout').value)
+    + row('Zelador out', document.getElementById('zeladorCheckout').value)
+    + row('Entrega',     document.getElementById('horaCheckout').value);
+
+  document.getElementById('prevA').src = SIG.A.hasMark ? document.getElementById('canvasA').toDataURL() : (SIGS.A || '');
+  document.getElementById('prevB').src = SIG.B.hasMark ? document.getElementById('canvasB').toDataURL() : (SIGS.B || '');
+}
+
+// ══════════════════════════════════════════════
+// WHATSAPP
+// ══════════════════════════════════════════════
+function sendWhatsApp() {
+  const get = id => document.getElementById(id).value;
+  const coProbs = Object.entries(CO).filter(([,x])=>x.status==='nok');
+  let msg = `🏠 *CHECKLIST DE LOCAÇÃO — CONCLUÍDO*\n──────────────────────\n`;
+  msg += `📍 *Espaço:* ${get('espaco')}\n`;
+  msg += `📅 *Data:* ${get('dataEvento')}\n`;
+  msg += `👤 *Morador:* ${get('nomeResp')}\n`;
+  msg += `🏢 *Bloco/Apto:* ${get('bloco')||'?'} / ${get('apartamento')}\n`;
+  msg += `👥 *Convidados:* ${get('qtdConvidados')||'?'}\n`;
+  msg += `🕐 *Entrega:* ${get('horaCheckout')||'—'}\n`;
+  msg += `🛡️ *Zelador (in):* ${get('zeladorCheckin')||'—'}\n`;
+  msg += `🛡️ *Zelador (out):* ${get('zeladorCheckout')||'—'}\n`;
+  msg += `──────────────────────\n`;
+  if (coProbs.length) {
+    msg += `🔴 *OCORRÊNCIAS NO CHECK-OUT:*\n`;
+    coProbs.forEach(([k,x]) => {
+      const label = k.replace('co|','').replace('|',' › ');
+      msg += `  ⚠️ ${label}${x.obs?' — '+x.obs:''}\n`;
+    });
+  } else {
+    msg += `✅ *Sem ocorrências no check-out.*\n`;
+  }
+  const obs = get('obsCheckout');
+  if (obs) msg += `📝 *Obs.:* ${obs}\n`;
+  msg += `──────────────────────\n_Registro gerado pelo sistema de checklist._`;
+  window.open(`https://wa.me/${ADM_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function novaReserva() {
+  if (!confirm('Iniciar novo registro? Os dados atuais serão apagados.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+</script>
+</body>
+</html>
