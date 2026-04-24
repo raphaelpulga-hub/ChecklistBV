@@ -3,820 +3,871 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Checklist — Churrasqueiras</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Gestão de Reservas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f1117;
-    --surface: #181c27;
-    --card: #1e2336;
-    --border: #2a3050;
-    --accent: #f0a500;
-    --accent2: #e05c00;
-    --text: #eef0f7;
-    --muted: #7a8099;
-    --danger: #e05050;
-    --success: #3db87a;
-    --radius: 14px;
-    --font-body: 'DM Sans', sans-serif;
-    --font-display: 'DM Serif Display', serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 15px;
-    min-height: 100vh;
-    padding-bottom: 60px;
-  }
+:root {
+  --bg:      #f5f4f0;
+  --surface: #ffffff;
+  --card:    #ffffff;
+  --border:  #e2e0d8;
+  --accent:  #1a1a2e;
+  --gold:    #c8922a;
+  --gold2:   #e8b84b;
+  --text:    #1a1a2e;
+  --muted:   #8a8880;
+  --danger:  #c0392b;
+  --success: #1e7e52;
+  --r: 12px;
+  --f-head: 'Syne', sans-serif;
+  --f-body: 'Inter', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:15px;min-height:100vh;}
 
-  /* HEADER */
-  .top-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 20px 12px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .top-bar .icon {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; flex-shrink: 0;
-  }
-  .top-bar h1 { font-family: var(--font-display); font-size: 18px; line-height: 1.2; }
-  .top-bar p  { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .save-badge {
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--success);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    opacity: 0;
-    transition: opacity .4s;
-    flex-shrink: 0;
-  }
-  .save-badge.show { opacity: 1; }
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
 
-  /* RESTORE BANNER */
-  .restore-banner {
-    display: none;
-    background: rgba(61,184,122,.1);
-    border: 1px solid rgba(61,184,122,.3);
-    border-radius: 12px;
-    margin: 16px 20px 0;
-    padding: 14px 16px;
-    gap: 10px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .restore-banner.show { display: flex; }
-  .restore-banner p { flex: 1; font-size: 13px; color: var(--success); line-height: 1.5; min-width: 140px; }
-  .restore-banner strong { display: block; font-size: 14px; margin-bottom: 2px; }
-  .rb-btns { display: flex; gap: 8px; flex-shrink: 0; }
-  .restore-btn {
-    background: var(--success); color: #fff;
-    border: none; border-radius: 9px;
-    padding: 9px 16px; font-size: 13px; font-weight: 600;
-    cursor: pointer; font-family: var(--font-body);
-  }
-  .dismiss-btn {
-    background: transparent; color: var(--muted);
-    border: 1px solid var(--border); border-radius: 9px;
-    padding: 9px 12px; font-size: 13px;
-    cursor: pointer; font-family: var(--font-body);
-  }
+/* ══════════════════════════════════
+   LOGIN
+══════════════════════════════════ */
+#screenLogin{
+  background:var(--accent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 24px;
+}
+.login-logo{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin-bottom:24px;
+}
+.login-title{font-family:var(--f-head);font-size:28px;font-weight:800;color:#fff;margin-bottom:4px;text-align:center;}
+.login-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:32px;text-align:center;}
+.login-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:360px;}
+.login-box .field{margin-bottom:16px;}
+.login-box .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
+.login-box .field input{
+  width:100%;background:var(--bg);border:1.5px solid var(--border);
+  border-radius:9px;color:var(--text);font-family:var(--f-body);
+  font-size:15px;padding:12px 14px;outline:none;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.login-box .field input:focus{border-color:var(--accent);}
+.login-err{color:var(--danger);font-size:13px;margin-bottom:12px;text-align:center;min-height:20px;}
+.btn-login{
+  width:100%;padding:14px;background:var(--accent);color:#fff;
+  border:none;border-radius:10px;font-family:var(--f-body);font-size:15px;font-weight:600;
+  cursor:pointer;transition:opacity .15s;
+}
+.btn-login:active{opacity:.85;}
+.login-hint{font-size:11px;color:rgba(255,255,255,.3);margin-top:20px;text-align:center;}
 
-  /* STEPS */
-  .steps { display: flex; padding: 0 20px; margin: 18px 0 0; }
-  .step-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 5px; opacity: 0.4; transition: opacity .3s;
-  }
-  .step-item.active, .step-item.done { opacity: 1; }
-  .step-dot {
-    width: 30px; height: 30px; border-radius: 50%;
-    border: 2px solid var(--border); background: var(--card);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 600; transition: all .3s;
-  }
-  .step-item.active .step-dot { border-color: var(--accent); background: var(--accent); color: #000; }
-  .step-item.done  .step-dot  { border-color: var(--success); background: var(--success); color: #fff; }
-  .step-label { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.2; }
-  .step-item.active .step-label { color: var(--accent); }
-  .step-line { flex: 1; height: 2px; background: var(--border); margin-top: 15px; transition: background .3s; }
-  .step-line.done { background: var(--success); }
+/* ══════════════════════════════════
+   APP
+══════════════════════════════════ */
+/* TOP BAR */
+.topbar{
+  background:var(--accent);color:#fff;
+  padding:14px 20px;
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:200;
+}
+.topbar-logo{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.topbar h1{font-family:var(--f-head);font-size:16px;font-weight:700;}
+.topbar-user{margin-left:auto;font-size:12px;opacity:.6;text-align:right;line-height:1.4;}
+.topbar-user strong{display:block;opacity:1;font-size:13px;}
+.btn-logout{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:600;
+  font-family:var(--f-body);cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
 
-  /* SECTIONS */
-  .section { display: none; padding: 20px; }
-  .section.active { display: block; animation: fadeIn .3s ease; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-  .section-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 6px; }
-  .section-subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+/* NAV TABS (ADM only) */
+.nav-tabs{
+  display:flex;background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:62px;z-index:100;
+}
+.nav-tab{
+  flex:1;padding:13px 8px;text-align:center;font-size:12px;font-weight:600;
+  color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;
+  transition:all .2s;letter-spacing:.02em;
+}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--gold);}
 
-  /* CARDS */
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; }
-  .card-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+/* VIEWS */
+.view{display:none;padding:20px;animation:fadeUp .25s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-  input[type=text], input[type=date], input[type=time], input[type=number], select, textarea {
-    width: 100%; background: var(--bg); border: 1px solid var(--border);
-    border-radius: 9px; color: var(--text); font-family: var(--font-body);
-    font-size: 15px; padding: 11px 14px; outline: none;
-    transition: border-color .2s; margin-bottom: 14px; -webkit-appearance: none;
-  }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-  textarea { resize: vertical; min-height: 70px; }
-  select option { background: var(--card); }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .row2 > div { display: flex; flex-direction: column; }
-  .row2 input, .row2 select { margin-bottom: 0; flex: 1; }
+/* SEC HEADER */
+.sec-title{font-family:var(--f-head);font-size:22px;font-weight:800;margin-bottom:4px;}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5;}
 
-  /* CHECKLIST */
-  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
-  .check-item:last-child { border-bottom: none; }
-  .check-left { flex: 1; }
-  .check-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-  .status-btns { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
-  .status-btn {
-    width: 38px; height: 38px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--bg);
-    color: var(--muted); font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all .15s; flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .status-btn.ok.selected  { background: rgba(61,184,122,.15); border-color: var(--success); color: var(--success); }
-  .status-btn.nok.selected { background: rgba(224,80,80,.15);  border-color: var(--danger);  color: var(--danger); }
-  .status-btn.na.selected  { background: rgba(122,128,153,.15); border-color: var(--muted);  color: var(--muted); }
-  .obs-field { margin-top: 8px; display: none; }
-  .obs-field.visible { display: block; }
-  .obs-field input { margin-bottom: 0; font-size: 13px; padding: 8px 12px; }
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;}
+.card-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
 
-  /* SIGNATURE — key fix: wrapper has explicit height, canvas fills it absolutely */
-  .sig-wrap {
-    position: relative;
-    width: 100%;
-    height: 160px;
-    background: #ffffff;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    touch-action: none;
-  }
-  .sig-wrap canvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    cursor: crosshair;
-    touch-action: none;
-    display: block;
-  }
-  .sig-placeholder {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: #bbb; font-size: 14px; pointer-events: none;
-    font-family: var(--font-body); transition: opacity .2s;
-  }
-  .sig-placeholder.hidden { opacity: 0; }
-  .sig-actions { display: flex; gap: 8px; margin-bottom: 4px; }
-  .btn-clear {
-    flex: 1; padding: 10px; background: var(--bg);
-    border: 1px solid var(--border); color: var(--muted);
-    border-radius: 9px; font-size: 13px; cursor: pointer; font-family: var(--font-body);
-  }
+/* FIELDS */
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--bg);border:1.5px solid var(--border);
+  border-radius:9px;color:var(--text);font-family:var(--f-body);
+  font-size:15px;padding:11px 14px;outline:none;transition:border-color .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:72px;}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a8880' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-  /* BUTTONS */
-  .btn-primary {
-    width: 100%; padding: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none; border-radius: 12px; color: #000;
-    font-family: var(--font-body); font-size: 16px; font-weight: 600;
-    cursor: pointer; margin-top: 8px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn-primary:active { opacity: .85; }
-  .btn-secondary {
-    width: 100%; padding: 14px; background: transparent;
-    border: 1px solid var(--border); border-radius: 12px; color: var(--text);
-    font-family: var(--font-body); font-size: 15px;
-    cursor: pointer; margin-top: 8px;
-  }
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:none;border-radius:var(--r);font-family:var(--f-body);font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:8px;}
+.btn:active{transform:scale(.98);opacity:.85;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn-success{background:var(--success);color:#fff;}
+.btn-wa{background:#25D366;color:#fff;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-sm{padding:8px 14px;font-size:12px;width:auto;margin-top:0;border-radius:8px;}
 
-  /* SUMMARY */
-  .summary-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 14px; gap: 10px; }
-  .summary-item:last-child { border: none; }
-  .summary-key { color: var(--muted); flex-shrink: 0; }
-  .summary-val { font-weight: 500; text-align: right; word-break: break-word; }
-  .badge.nok { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: rgba(224,80,80,.15); color: var(--danger); }
+/* RESERVA CARD */
+.reserva-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:16px;margin-bottom:10px;
+  cursor:pointer;transition:border-color .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.reserva-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.reserva-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;background:var(--border);}
+.reserva-card.status-pendente::before{background:var(--gold);}
+.reserva-card.status-checkin::before{background:#3498db;}
+.reserva-card.status-concluido::before{background:var(--success);}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.rc-espaco{font-family:var(--f-head);font-size:16px;font-weight:700;}
+.rc-badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:6px;flex-shrink:0;}
+.badge-pendente{background:rgba(200,146,42,.12);color:var(--gold);}
+.badge-checkin{background:rgba(52,152,219,.12);color:#2980b9;}
+.badge-concluido{background:rgba(30,126,82,.12);color:var(--success);}
+.rc-morador{font-size:14px;font-weight:500;margin-bottom:4px;}
+.rc-meta{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--muted);}
+.rc-action{margin-top:10px;font-size:13px;font-weight:600;color:var(--gold);}
 
-  .whatsapp-btn {
-    background: #25D366; color: #fff; border: none; border-radius: 12px;
-    padding: 16px; font-size: 16px; font-weight: 600; font-family: var(--font-body);
-    cursor: pointer; width: 100%;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-top: 10px;
-  }
-  .alert {
-    background: rgba(240,165,0,.1); border: 1px solid rgba(240,165,0,.3);
-    border-radius: 10px; padding: 12px 16px; font-size: 13px;
-    color: var(--accent); margin-bottom: 16px; line-height: 1.5;
-  }
+/* USER LIST */
+.user-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.user-row:last-child{border:none;}
+.user-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.ua-adm{background:var(--accent);}
+.ua-zel{background:var(--gold);}
+.user-info{flex:1;}
+.user-name{font-size:14px;font-weight:600;}
+.user-role{font-size:12px;color:var(--muted);}
+.user-del{
+  background:transparent;border:1px solid var(--border);border-radius:8px;
+  padding:6px 10px;font-size:18px;cursor:pointer;color:var(--danger);flex-shrink:0;
+}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:36px 20px;color:var(--muted);}
+.empty-state .emoji{font-size:36px;display:block;margin-bottom:10px;}
+.empty-state p{font-size:14px;line-height:1.5;}
+
+/* CHECKLIST */
+.cl-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.cl-item:last-child{border-bottom:none;}
+.cl-left{flex:1;}
+.cl-name{font-size:14px;font-weight:500;}
+.cl-obs-wrap{margin-top:6px;display:none;}
+.cl-obs-wrap.show{display:block;}
+.cl-obs-wrap input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:var(--f-body);color:var(--text);outline:none;}
+.cl-obs-wrap input:focus{border-color:var(--accent);}
+.cl-btns{display:flex;gap:5px;flex-shrink:0;margin-top:1px;}
+.cl-btn{width:40px;height:40px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--muted);}
+.cl-btn.ok.sel{background:rgba(30,126,82,.1);border-color:var(--success);color:var(--success);}
+.cl-btn.nok.sel{background:rgba(192,57,43,.1);border-color:var(--danger);color:var(--danger);}
+.cl-btn.na.sel{background:rgba(138,136,128,.1);border-color:var(--muted);color:var(--muted);}
+
+/* SIGNATURE */
+.sig-container{width:100%;height:180px;background:#fff;border:2px dashed #ccc;border-radius:var(--r);position:relative;overflow:hidden;margin-bottom:8px;touch-action:none;user-select:none;-webkit-user-select:none;}
+.sig-container.signed{border-style:solid;border-color:var(--accent);}
+.sig-container canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+.sig-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none;transition:opacity .2s;}
+.sig-hint .sig-icon{font-size:28px;}
+.sig-hint p{font-size:13px;color:#bbb;text-align:center;}
+.sig-hint.hide{opacity:0;}
+.sig-actions{display:flex;gap:8px;margin-bottom:12px;}
+.sig-clear{flex:1;padding:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;font-size:13px;cursor:pointer;font-family:var(--f-body);color:var(--muted);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
 </style>
 </head>
 <body>
 
-<script>
-  const ADM_WHATSAPP = "5521999999999"; // ← edite: DDD + número sem espaços
-  const ESPACOS = [
-    "Churrasqueira 01",
-    "Churrasqueira 02",
-    "Churrasqueira 03",
-    "Churrasqueira 04 (cap. 30 pessoas)",
-    "Salão Gourmet",
-    "Salão de Festas",
-  ];
-  const CHECKLIST_ITEMS = [
-    { group: "Estrutura",    items: ["Paredes / alvenaria", "Piso", "Teto / cobertura", "Portas e janelas", "Iluminação geral"] },
-    { group: "Mobiliário",   items: ["Mesa(s)", "Cadeiras", "Bancada / pia", "Armários / prateleiras"] },
-    { group: "Equipamentos", items: ["Churrasqueira / grelha", "Geladeira", "Forno / micro-ondas", "Caixas de som instaladas", "Tomadas e interruptores"] },
-    { group: "Utensílios",   items: ["Espetos e ferramentas", "Tábuas de corte", "Pegadores / luvas"] },
-    { group: "Higiene",      items: ["Limpeza geral", "Lixeiras com tampa", "Torneiras funcionando"] },
-  ];
-  const STORAGE_KEY = "checklist_cond_v3";
-</script>
-
-<!-- HEADER -->
-<div class="top-bar">
-  <div class="icon">🏠</div>
-  <div>
-    <h1>Checklist de Locação</h1>
-    <p>Áreas comuns — Condomínio</p>
-  </div>
-  <div class="save-badge" id="saveBadge">💾 Salvo</div>
-</div>
-
-<!-- RESTORE BANNER -->
-<div class="restore-banner" id="restoreBanner">
-  <p><strong>📂 Registro em andamento</strong><span id="restoreDesc"></span></p>
-  <div class="rb-btns">
-    <button class="restore-btn" onclick="restoreSession()">Retomar</button>
-    <button class="dismiss-btn" onclick="dismissRestore()">✕</button>
-  </div>
-</div>
-
-<!-- STEPS -->
-<div class="steps">
-  <div class="step-item active" id="si0"><div class="step-dot">1</div><div class="step-label">Reserva</div></div>
-  <div class="step-line" id="sl0"></div>
-  <div class="step-item" id="si1"><div class="step-dot">2</div><div class="step-label">Check-in</div></div>
-  <div class="step-line" id="sl1"></div>
-  <div class="step-item" id="si2"><div class="step-dot">3</div><div class="step-label">Check-out</div></div>
-  <div class="step-line" id="sl2"></div>
-  <div class="step-item" id="si3"><div class="step-dot">4</div><div class="step-label">Enviar</div></div>
-</div>
-
-<!-- ════ STEP 0 ════ -->
-<div class="section active" id="step0">
-  <div class="section-title">Dados da Reserva</div>
-  <div class="section-subtitle">Preencha com o morador antes de entregar o espaço.</div>
-  <div class="card">
-    <div class="card-title">📋 Espaço e Data</div>
-    <label>Espaço reservado</label>
-    <select id="espaco"></select>
-    <div class="row2">
-      <div><label>Data do evento</label><input type="date" id="dataEvento"></div>
-      <div><label>Bloco</label><input type="text" id="bloco" placeholder="Ex: B"></div>
+<!-- ══════════════════════════════════
+     SCREEN: LOGIN
+══════════════════════════════════ -->
+<div class="screen active" id="screenLogin">
+  <div class="login-logo">🏠</div>
+  <div class="login-title">Reservas</div>
+  <div class="login-sub">Gestão de Áreas Comuns</div>
+  <div class="login-box">
+    <div class="field">
+      <label>Usuário</label>
+      <input type="text" id="loginUser" placeholder="seu.usuario" autocomplete="username" autocapitalize="none">
     </div>
-    <div style="height:14px"></div>
-    <div class="row2">
-      <div><label>Início</label><input type="time" id="horaInicio"></div>
-      <div><label>Término</label><input type="time" id="horaFim"></div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn-login" onclick="doLogin()">Entrar</button>
   </div>
-  <div class="card">
-    <div class="card-title">👤 Morador Responsável</div>
-    <label>Nome completo</label>
-    <input type="text" id="nomeResp" placeholder="Nome legível">
-    <label>Apartamento</label>
-    <input type="text" id="apartamento" placeholder="Ex: 302">
-    <label>Nº de convidados</label>
-    <input type="number" id="qtdConvidados" placeholder="Ex: 20" min="1">
-  </div>
-  <div class="card">
-    <div class="card-title">🛡️ Zelador (check-in)</div>
-    <label>Nome do zelador</label>
-    <input type="text" id="zeladorCheckin" placeholder="Nome completo">
-  </div>
-  <div class="alert">⚠️ Lembre ao morador: <strong>proibido decoração, botijão de gás, instrumentos musicais ao vivo e equipamentos sonoros externos.</strong></div>
-  <button class="btn-primary" onclick="goStep(1)">▶ Iniciar Check-in</button>
+  <div class="login-hint">Acesso restrito a funcionários autorizados</div>
 </div>
 
-<!-- ════ STEP 1 ════ -->
-<div class="section" id="step1">
-  <div class="section-title">Check-in</div>
-  <div class="section-subtitle">Inspecione cada item com o morador e registre o estado atual.</div>
-  <div id="clIn"></div>
-  <div class="card">
-    <div class="card-title">📝 Observações gerais</div>
-    <textarea id="obsCheckin" placeholder="Danos ou ausências não cobertos na lista..."></textarea>
-  </div>
-  <div class="card">
-    <div class="card-title">✍️ Assinatura — Recebimento</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Morador assina confirmando o recebimento do espaço.</p>
-    <div class="sig-wrap" id="wrapA">
-      <canvas id="canvasA"></canvas>
-      <div class="sig-placeholder" id="phA">✍ Assine aqui com o dedo</div>
-    </div>
-    <div class="sig-actions"><button class="btn-clear" onclick="clearSig('A')">🗑 Limpar assinatura</button></div>
-  </div>
-  <button class="btn-primary" onclick="goStep(2)">▶ Ir para Check-out</button>
-  <button class="btn-secondary" onclick="goStep(0)">← Voltar</button>
-</div>
+<!-- ══════════════════════════════════
+     SCREEN: APP
+══════════════════════════════════ -->
+<div class="screen" id="screenApp">
 
-<!-- ════ STEP 2 ════ -->
-<div class="section" id="step2">
-  <div class="section-title">Check-out</div>
-  <div class="section-subtitle">Inspecione o espaço na devolução e registre as condições.</div>
-  <div class="card">
-    <div class="card-title">🛡️ Zelador (check-out)</div>
-    <label>Nome do zelador</label>
-    <input type="text" id="zeladorCheckout" placeholder="Nome completo">
-    <label>Horário de entrega</label>
-    <input type="time" id="horaCheckout">
-  </div>
-  <div id="clOut"></div>
-  <div class="card">
-    <div class="card-title">📝 Observações gerais</div>
-    <textarea id="obsCheckout" placeholder="Danos, itens em falta, sujeira..."></textarea>
-  </div>
-  <div class="card">
-    <div class="card-title">✍️ Assinatura — Devolução</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Morador assina confirmando a entrega do espaço.</p>
-    <div class="sig-wrap" id="wrapB">
-      <canvas id="canvasB"></canvas>
-      <div class="sig-placeholder" id="phB">✍ Assine aqui com o dedo</div>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">🏠</div>
+    <div>
+      <h1>Reservas</h1>
     </div>
-    <div class="sig-actions"><button class="btn-clear" onclick="clearSig('B')">🗑 Limpar assinatura</button></div>
+    <div class="topbar-user">
+      <strong id="tbName"></strong>
+      <span id="tbRole"></span>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Sair</button>
   </div>
-  <button class="btn-primary" onclick="goStep(3)">▶ Revisar e Enviar</button>
-  <button class="btn-secondary" onclick="goStep(1)">← Voltar</button>
-</div>
 
-<!-- ════ STEP 3 ════ -->
-<div class="section" id="step3">
-  <div class="section-title">Resumo</div>
-  <div class="section-subtitle">Revise antes de enviar à administração.</div>
-  <div class="card" id="sumReserva"></div>
-  <div class="card" id="sumCI"></div>
-  <div class="card" id="sumCO"></div>
-  <div class="card">
-    <div class="card-title">🖊️ Assinaturas coletadas</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Check-in</div>
-        <img id="prevA" style="width:100%;border-radius:8px;border:1px solid var(--border);background:#fff;min-height:60px;">
+  <!-- NAV TABS (ADM only) -->
+  <div class="nav-tabs" id="navTabs" style="display:none">
+    <div class="nav-tab active" id="tab0" onclick="setTab(0)">📋 Reservas</div>
+    <div class="nav-tab" id="tab1" onclick="setTab(1)">➕ Nova</div>
+    <div class="nav-tab" id="tab2" onclick="setTab(2)">👥 Usuários</div>
+  </div>
+
+  <!-- ── VIEW: ADM RESERVAS ── -->
+  <div class="view active" id="viewAdmReservas">
+    <div class="sec-title">Reservas</div>
+    <div class="sec-sub" id="admResSubtitle"></div>
+    <div id="admLista"></div>
+  </div>
+
+  <!-- ── VIEW: ADM NOVA RESERVA ── -->
+  <div class="view" id="viewAdmNova">
+    <div class="sec-title">Nova Reserva</div>
+    <div class="sec-sub">Preencha os dados e cadastre para o zelador.</div>
+    <div class="card">
+      <div class="card-label">📋 Dados do Espaço</div>
+      <div class="field"><label>Espaço</label><select id="admEspaco"></select></div>
+      <div class="row2">
+        <div class="field"><label>Data</label><input type="date" id="admData"></div>
+        <div class="field"><label>Bloco</label><input type="text" id="admBloco" placeholder="Ex: B"></div>
       </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Check-out</div>
-        <img id="prevB" style="width:100%;border-radius:8px;border:1px solid var(--border);background:#fff;min-height:60px;">
+      <div class="row2">
+        <div class="field"><label>Início</label><input type="time" id="admInicio"></div>
+        <div class="field"><label>Término</label><input type="time" id="admFim"></div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-label">👤 Morador</div>
+      <div class="field"><label>Nome completo</label><input type="text" id="admMorador" placeholder="Nome legível"></div>
+      <div class="row2">
+        <div class="field"><label>Apartamento</label><input type="text" id="admApto" placeholder="302"></div>
+        <div class="field"><label>Convidados</label><input type="number" id="admConvid" placeholder="20" min="1"></div>
+      </div>
+    </div>
+    <button class="btn btn-gold" onclick="criarReserva()">➕ Criar Reserva</button>
   </div>
-  <button class="whatsapp-btn" onclick="sendWhatsApp()">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-    Enviar para Administração
-  </button>
-  <button class="btn-secondary" onclick="goStep(2)">← Voltar ao check-out</button>
-  <button class="btn-secondary" onclick="novaReserva()" style="color:var(--accent);border-color:var(--accent);margin-top:6px;">🔄 Novo Registro</button>
-</div>
+
+  <!-- ── VIEW: ADM USUÁRIOS ── -->
+  <div class="view" id="viewAdmUsers">
+    <div class="sec-title">Usuários</div>
+    <div class="sec-sub">Gerencie os acessos ao sistema.</div>
+    <div class="card">
+      <div class="card-label">➕ Novo Usuário</div>
+      <div class="row2">
+        <div class="field"><label>Usuário</label><input type="text" id="nuLogin" placeholder="zelador1" autocapitalize="none"></div>
+        <div class="field"><label>Perfil</label>
+          <select id="nuRole">
+            <option value="zelador">Zelador</option>
+            <option value="adm">Administrador</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Nome completo</label><input type="text" id="nuNome" placeholder="Nome do zelador"></div>
+      <div class="row2">
+        <div class="field"><label>Senha</label><input type="password" id="nuSenha" placeholder="••••••"></div>
+        <div class="field"><label>Confirmar</label><input type="password" id="nuSenha2" placeholder="••••••"></div>
+      </div>
+      <button class="btn btn-primary" onclick="criarUsuario()">➕ Criar Usuário</button>
+    </div>
+    <div class="card">
+      <div class="card-label">👥 Usuários Cadastrados</div>
+      <div id="userLista"></div>
+    </div>
+  </div>
+
+  <!-- ── VIEW: ZELADOR LISTA ── -->
+  <div class="view" id="viewZelLista">
+    <div class="sec-title">Reservas de Hoje</div>
+    <div class="sec-sub">Toque em uma reserva para fazer o check-in ou check-out.</div>
+    <div id="zelLista"></div>
+  </div>
+
+  <!-- ── VIEW: CHECK-IN ── -->
+  <div class="view" id="viewCI">
+    <div class="sec-title" id="ciTitulo"></div>
+    <div class="sec-sub" id="ciSub"></div>
+    <div class="card">
+      <div class="card-label">🛡️ Zelador responsável</div>
+      <div class="field"><label>Seu nome</label><input type="text" id="ciZelador" placeholder="Nome do zelador"></div>
+    </div>
+    <div class="card-label" style="padding:0 0 8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);">Vistoria do Espaço</div>
+    <div id="ciChecklist"></div>
+    <div class="card">
+      <div class="card-label">📝 Observações gerais</div>
+      <div class="field"><textarea id="ciObs" placeholder="Danos ou ausências não listados acima..."></textarea></div>
+    </div>
+    <div class="card">
+      <div class="card-label">✍️ Assinatura do Morador — Recebimento</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Passe o celular ao morador para assinar confirmando o recebimento do espaço.</p>
+      <div class="sig-container" id="sigCI">
+        <canvas id="canvasCI"></canvas>
+        <div class="sig-hint" id="hintCI"><span class="sig-icon">✍️</span><p>Assine aqui com o dedo</p></div>
+      </div>
+      <div class="sig-actions"><button class="sig-clear" onclick="clearCanvas('CI')">🗑 Limpar</button></div>
+    </div>
+    <button class="btn btn-success" onclick="salvarCheckin()">✅ Confirmar Check-in</button>
+    <button class="btn btn-outline" onclick="voltarLista()">← Voltar</button>
+  </div>
+
+  <!-- ── VIEW: CHECK-OUT ── -->
+  <div class="view" id="viewCO">
+    <div class="sec-title" id="coTitulo"></div>
+    <div class="sec-sub" id="coSub"></div>
+    <div class="card">
+      <div class="card-label">🛡️ Zelador responsável</div>
+      <div class="field"><label>Seu nome</label><input type="text" id="coZelador" placeholder="Nome do zelador"></div>
+      <div class="field"><label>Horário de entrega</label><input type="time" id="coHora"></div>
+    </div>
+    <div class="card-label" style="padding:0 0 8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);">Vistoria de Devolução</div>
+    <div id="coChecklist"></div>
+    <div class="card">
+      <div class="card-label">📝 Observações gerais</div>
+      <div class="field"><textarea id="coObs" placeholder="Danos, itens em falta, sujeira..."></textarea></div>
+    </div>
+    <div class="card">
+      <div class="card-label">✍️ Assinatura do Morador — Devolução</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Passe o celular ao morador para assinar confirmando a entrega.</p>
+      <div class="sig-container" id="sigCO">
+        <canvas id="canvasCO"></canvas>
+        <div class="sig-hint" id="hintCO"><span class="sig-icon">✍️</span><p>Assine aqui com o dedo</p></div>
+      </div>
+      <div class="sig-actions"><button class="sig-clear" onclick="clearCanvas('CO')">🗑 Limpar</button></div>
+    </div>
+    <button class="btn btn-wa" onclick="salvarCheckout()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Concluir e Enviar para ADM
+    </button>
+    <button class="btn btn-outline" onclick="voltarLista()">← Voltar</button>
+  </div>
+
+</div><!-- /screenApp -->
+
+<div class="toast" id="toast"></div>
 
 <script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const ADM_WHATSAPP = "5521999999999"; // ← edite
+
+const ESPACOS = [
+  "Churrasqueira 01","Churrasqueira 02","Churrasqueira 03",
+  "Churrasqueira 04 (cap. 30 pessoas)","Salão Gourmet","Salão de Festas",
+];
+
+const CHECKLIST = [
+  { grupo:"Estrutura",    itens:["Paredes / alvenaria","Piso","Teto / cobertura","Portas e janelas","Iluminação geral"] },
+  { grupo:"Mobiliário",   itens:["Mesa(s)","Cadeiras","Bancada / pia","Armários / prateleiras"] },
+  { grupo:"Equipamentos", itens:["Equipamento principal","Geladeira","Micro-ondas / forno","Caixas de som","Tomadas e interruptores"] },
+  { grupo:"Utensílios",   itens:["Espetos / ferramentas","Tábuas de corte","Pegadores / luvas"] },
+  { grupo:"Higiene",      itens:["Limpeza geral","Lixeiras com tampa","Torneiras funcionando"] },
+];
+
+// Storage keys
+const SK_USERS    = "cond_users_v1";
+const SK_RESERVAS = "cond_reservas_v1";
+const SK_SESSION  = "cond_session_v1";
+
 // ══════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════
-let STEP = 0;
-const CI = {}; // check-in checklist state
-const CO = {}; // check-out checklist state
-const SIGS = { A: null, B: null }; // dataURLs for persistence
-
-// canvas rendering contexts + metadata
-const SIG = {
-  A: { drawing: false, hasMark: false, ctx: null },
-  B: { drawing: false, hasMark: false, ctx: null },
-};
+let users    = [];
+let reservas = [];
+let session  = null; // { login, nome, role }
+let activeId = null;
+let activeTab = 0;
+const clState = { CI:{}, CO:{} };
+const pads = { CI:{hasMark:false,ctx:null}, CO:{hasMark:false,ctx:null} };
 
 // ══════════════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', function() {
-  // populate space selector
-  const sel = document.getElementById('espaco');
-  ESPACOS.forEach(e => { const o = document.createElement('option'); o.textContent = e; sel.appendChild(o); });
-  document.getElementById('dataEvento').valueAsDate = new Date();
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
 
-  buildChecklist('clIn',  CI, 'ci');
-  buildChecklist('clOut', CO, 'co');
+  // Seed default admin if no users exist
+  if (!users.length) {
+    users.push({ login:'admin', nome:'Administrador', role:'adm', pass:'admin123' });
+    saveUsers();
+  }
 
-  initSig('A');
-  initSig('B');
+  // Restore session
+  const saved = sessionStorage.getItem(SK_SESSION);
+  if (saved) {
+    try { session = JSON.parse(saved); } catch(e) {}
+  }
 
-  checkSaved();
+  // Populate space selector
+  const sel = document.getElementById('admEspaco');
+  ESPACOS.forEach(e => { const o=document.createElement('option'); o.textContent=e; sel.appendChild(o); });
+  document.getElementById('admData').valueAsDate = new Date();
 
-  // auto-save on any input
-  document.body.addEventListener('input', debounce(saveSession, 400));
+  initCanvas('CI');
+  initCanvas('CO');
+
+  if (session) bootApp();
+  else showScreen('screenLogin');
 });
 
-function debounce(fn, ms) {
-  let t; return function(...a) { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); };
+function loadData() {
+  try { users    = JSON.parse(localStorage.getItem(SK_USERS))    || []; } catch(e){ users=[]; }
+  try { reservas = JSON.parse(localStorage.getItem(SK_RESERVAS)) || []; } catch(e){ reservas=[]; }
+}
+function saveUsers()    { try { localStorage.setItem(SK_USERS,    JSON.stringify(users));    } catch(e){} }
+function saveReservas() { try { localStorage.setItem(SK_RESERVAS, JSON.stringify(reservas)); } catch(e){} }
+
+// ══════════════════════════════════════════════
+// SCREENS
+// ══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
 // ══════════════════════════════════════════════
-// NAVIGATION
+// LOGIN / LOGOUT
 // ══════════════════════════════════════════════
-function goStep(n) {
-  if (n > STEP && !validateStep(STEP)) return;
-
-  document.getElementById('step'+STEP).classList.remove('active');
-  document.getElementById('si'+STEP).classList.remove('active');
-  if (n > STEP) {
-    document.getElementById('si'+STEP).classList.add('done');
-    if (STEP < 3) document.getElementById('sl'+STEP).classList.add('done');
+function doLogin() {
+  const login = document.getElementById('loginUser').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value;
+  const u = users.find(u => u.login === login && u.pass === pass);
+  if (!u) {
+    document.getElementById('loginErr').textContent = 'Usuário ou senha incorretos.';
+    return;
   }
-
-  STEP = n;
-  document.getElementById('step'+n).classList.add('active');
-  document.getElementById('si'+n).classList.add('active');
-  document.getElementById('si'+n).classList.remove('done');
-
-  // re-calibrate signature canvas when its section becomes visible
-  if (n === 1) requestAnimationFrame(() => calibrateSig('A'));
-  if (n === 2) requestAnimationFrame(() => calibrateSig('B'));
-  if (n === 3) buildSummary();
-
-  saveSession();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('loginErr').textContent = '';
+  session = { login: u.login, nome: u.nome, role: u.role };
+  sessionStorage.setItem(SK_SESSION, JSON.stringify(session));
+  bootApp();
 }
 
-function validateStep(s) {
-  if (s === 0) {
-    if (!v('nomeResp'))       { alert('Informe o nome do morador.');  return false; }
-    if (!v('apartamento'))    { alert('Informe o apartamento.');       return false; }
-    if (!v('zeladorCheckin')) { alert('Informe o nome do zelador.');   return false; }
-  }
-  return true;
+function doLogout() {
+  session = null;
+  sessionStorage.removeItem(SK_SESSION);
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  showScreen('screenLogin');
 }
-function v(id) { return document.getElementById(id).value.trim(); }
+
+function bootApp() {
+  document.getElementById('tbName').textContent = session.nome;
+  document.getElementById('tbRole').textContent = session.role === 'adm' ? 'Administrador' : 'Zelador';
+
+  if (session.role === 'adm') {
+    document.getElementById('navTabs').style.display = 'flex';
+    setTab(0);
+  } else {
+    document.getElementById('navTabs').style.display = 'none';
+    renderZel();
+    showView('viewZelLista');
+  }
+  showScreen('screenApp');
+}
+
+// ══════════════════════════════════════════════
+// TABS (ADM)
+// ══════════════════════════════════════════════
+function setTab(n) {
+  activeTab = n;
+  [0,1,2].forEach(i => document.getElementById('tab'+i).classList.toggle('active', i===n));
+  const views = ['viewAdmReservas','viewAdmNova','viewAdmUsers'];
+  views.forEach((v,i) => {
+    const el = document.getElementById(v);
+    el.classList.toggle('active', i===n);
+  });
+  if (n===0) renderAdm();
+  if (n===2) renderUsers();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════
+// USUÁRIOS
+// ══════════════════════════════════════════════
+function criarUsuario() {
+  const login  = document.getElementById('nuLogin').value.trim().toLowerCase();
+  const role   = document.getElementById('nuRole').value;
+  const nome   = document.getElementById('nuNome').value.trim();
+  const pass   = document.getElementById('nuSenha').value;
+  const pass2  = document.getElementById('nuSenha2').value;
+
+  if (!login) { toast('Informe o nome de usuário.'); return; }
+  if (!nome)  { toast('Informe o nome completo.');   return; }
+  if (!pass)  { toast('Informe uma senha.');         return; }
+  if (pass !== pass2) { toast('As senhas não coincidem.'); return; }
+  if (users.find(u => u.login === login)) { toast('Este usuário já existe.'); return; }
+
+  users.push({ login, nome, role, pass });
+  saveUsers();
+  renderUsers();
+  ['nuLogin','nuNome','nuSenha','nuSenha2'].forEach(id => document.getElementById(id).value='');
+  toast('✅ Usuário criado!');
+}
+
+function deletarUsuario(login) {
+  if (login === session.login) { toast('Você não pode apagar seu próprio usuário.'); return; }
+  if (!confirm(`Apagar usuário "${login}"?`)) return;
+  users = users.filter(u => u.login !== login);
+  saveUsers();
+  renderUsers();
+  toast('Usuário removido.');
+}
+
+function renderUsers() {
+  const el = document.getElementById('userLista');
+  if (!users.length) { el.innerHTML='<div class="empty-state"><span class="emoji">👤</span><p>Nenhum usuário.</p></div>'; return; }
+  el.innerHTML = users.map(u => `
+    <div class="user-row">
+      <div class="user-avatar ${u.role==='adm'?'ua-adm':'ua-zel'}">${u.nome.charAt(0).toUpperCase()}</div>
+      <div class="user-info">
+        <div class="user-name">${u.nome}</div>
+        <div class="user-role">${u.login} · ${u.role==='adm'?'Administrador':'Zelador'}</div>
+      </div>
+      <button class="user-del" onclick="deletarUsuario('${u.login}')">🗑</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// RESERVAS — ADM
+// ══════════════════════════════════════════════
+function criarReserva() {
+  const espaco  = document.getElementById('admEspaco').value;
+  const data    = document.getElementById('admData').value;
+  const bloco   = document.getElementById('admBloco').value.trim();
+  const inicio  = document.getElementById('admInicio').value;
+  const fim     = document.getElementById('admFim').value;
+  const morador = document.getElementById('admMorador').value.trim();
+  const apto    = document.getElementById('admApto').value.trim();
+  const convid  = document.getElementById('admConvid').value;
+
+  if (!morador) { toast('Informe o nome do morador.'); return; }
+  if (!apto)    { toast('Informe o apartamento.');     return; }
+  if (!data)    { toast('Informe a data.');            return; }
+
+  reservas.push({
+    id: Date.now(), espaco, data, bloco, inicio, fim, morador, apto, convid,
+    status:'pendente', ci:null, co:null,
+  });
+  saveReservas();
+  ['admBloco','admInicio','admFim','admMorador','admApto','admConvid'].forEach(id => document.getElementById(id).value='');
+  toast('✅ Reserva criada!');
+  setTab(0);
+}
+
+function deletarReserva(id) {
+  if (!confirm('Apagar esta reserva?')) return;
+  reservas = reservas.filter(r => r.id !== id);
+  saveReservas();
+  renderAdm();
+}
+
+function renderAdm() {
+  const el = document.getElementById('admLista');
+  const today = todayISO();
+  document.getElementById('admResSubtitle').textContent =
+    'Hoje: ' + new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+
+  if (!reservas.length) {
+    el.innerHTML='<div class="empty-state"><span class="emoji">📋</span><p>Nenhuma reserva cadastrada.</p></div>';
+    return;
+  }
+  const sorted = [...reservas].sort((a,b)=>(a.data+a.inicio).localeCompare(b.data+b.inicio));
+  el.innerHTML = sorted.map(r => `
+    <div class="reserva-card status-${r.status}">
+      <div class="rc-top">
+        <div class="rc-espaco">${r.espaco}</div>
+        <span class="rc-badge badge-${r.status}">${labelStatus(r.status)}</span>
+      </div>
+      <div class="rc-morador">👤 ${r.morador}</div>
+      <div class="rc-meta">
+        <span>📅 ${fmtData(r.data)}${r.data===today?' · Hoje':''}</span>
+        ${r.inicio?`<span>🕐 ${r.inicio}${r.fim?' – '+r.fim:''}</span>`:''}
+        <span>🏢 Apto ${r.apto}${r.bloco?' – Bloco '+r.bloco:''}</span>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0 10px">
+      <button class="btn btn-danger btn-sm" onclick="deletarReserva(${r.id})" style="width:100%">🗑 Apagar</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// RESERVAS — ZELADOR
+// ══════════════════════════════════════════════
+function renderZel() {
+  const today = todayISO();
+  const el = document.getElementById('zelLista');
+  const hoje = reservas.filter(r => r.data === today);
+  if (!hoje.length) {
+    el.innerHTML='<div class="empty-state"><span class="emoji">🎉</span><p>Nenhuma reserva para hoje.<br>A administração ainda não cadastrou reservas.</p></div>';
+    return;
+  }
+  const sorted = [...hoje].sort((a,b)=>(a.inicio||'').localeCompare(b.inicio||''));
+  el.innerHTML = sorted.map(r => `
+    <div class="reserva-card status-${r.status}" onclick="${r.status!=='concluido'?'abrirReserva('+r.id+')':''}">
+      <div class="rc-top">
+        <div class="rc-espaco">${r.espaco}</div>
+        <span class="rc-badge badge-${r.status}">${labelStatus(r.status)}</span>
+      </div>
+      <div class="rc-morador">👤 ${r.morador}</div>
+      <div class="rc-meta">
+        ${r.inicio?`<span>🕐 ${r.inicio}${r.fim?' – '+r.fim:''}</span>`:''}
+        <span>🏢 Apto ${r.apto}${r.bloco?' – Bloco '+r.bloco:''}</span>
+        ${r.convid?`<span>👥 ${r.convid} pessoas</span>`:''}
+      </div>
+      <div class="rc-action">
+        ${r.status==='pendente' ? '→ Toque para fazer o check-in' :
+          r.status==='checkin'  ? '→ Toque para fazer o check-out' :
+          '✓ Registro concluído'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function abrirReserva(id) {
+  const r = reservas.find(x => x.id === id);
+  if (!r || r.status==='concluido') return;
+  activeId = id;
+
+  if (r.status === 'pendente') {
+    document.getElementById('ciTitulo').textContent = r.espaco;
+    document.getElementById('ciSub').textContent = `${r.morador} · Apto ${r.apto}${r.bloco?' · Bloco '+r.bloco:''} · ${fmtData(r.data)}`;
+    document.getElementById('ciZelador').value = session.nome; // pre-fill with logged zelador
+    document.getElementById('ciObs').value = '';
+    buildChecklist('ciChecklist','CI');
+    clearCanvas('CI');
+    showView('viewCI');
+  } else {
+    document.getElementById('coTitulo').textContent = r.espaco;
+    document.getElementById('coSub').textContent = `${r.morador} · Apto ${r.apto}${r.bloco?' · Bloco '+r.bloco:''} · ${fmtData(r.data)}`;
+    document.getElementById('coZelador').value = session.nome;
+    document.getElementById('coHora').value = '';
+    document.getElementById('coObs').value = '';
+    buildChecklist('coChecklist','CO');
+    clearCanvas('CO');
+    showView('viewCO');
+  }
+}
+
+function voltarLista() {
+  activeId = null;
+  renderZel();
+  showView('viewZelLista');
+}
 
 // ══════════════════════════════════════════════
 // CHECKLIST
 // ══════════════════════════════════════════════
-function buildChecklist(containerId, state, prefix) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  CHECKLIST_ITEMS.forEach(grp => {
+function buildChecklist(containerId, key) {
+  clState[key] = {};
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  CHECKLIST.forEach(grp => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.innerHTML = `<div class="card-title">📦 ${grp.group}</div>`;
-    grp.items.forEach(item => {
-      const key = prefix + '|' + grp.group + '|' + item;
-      if (!state[key]) state[key] = { status: null, obs: '' };
-      const s = state[key];
-
+    card.innerHTML = `<div class="card-label">📦 ${grp.grupo}</div>`;
+    grp.itens.forEach(item => {
+      const k = grp.grupo+'|'+item;
+      clState[key][k] = { status:null, obs:'' };
+      const uid = (key+'_'+k).replace(/[^a-z0-9]/gi,'_');
       const row = document.createElement('div');
-      row.className = 'check-item';
+      row.className = 'cl-item';
       row.innerHTML = `
-        <div class="check-left">
-          <div class="check-name">${item}</div>
-          <div class="obs-field${s.status==='nok'?' visible':''}" id="of_${key}">
-            <input type="text" placeholder="Descreva o dano/falta..." value="${esc(s.obs)}" id="oi_${key}">
+        <div class="cl-left">
+          <div class="cl-name">${item}</div>
+          <div class="cl-obs-wrap" id="ow_${uid}">
+            <input type="text" placeholder="Descreva o dano ou falta..." id="oi_${uid}">
           </div>
         </div>
-        <div class="status-btns">
-          <button class="status-btn ok${s.status==='ok'?' selected':''}">✓</button>
-          <button class="status-btn nok${s.status==='nok'?' selected':''}">✗</button>
-          <button class="status-btn na${s.status==='na'?' selected':''}">—</button>
+        <div class="cl-btns">
+          <button class="cl-btn ok"  title="OK">✓</button>
+          <button class="cl-btn nok" title="Dano/Falta">✗</button>
+          <button class="cl-btn na"  title="N/A">—</button>
         </div>`;
       card.appendChild(row);
-
-      row.querySelector('#oi_'+key).addEventListener('input', function() {
-        state[key].obs = this.value;
-        saveSession();
-      });
-      row.querySelectorAll('.status-btn').forEach(btn => {
+      row.querySelector('#oi_'+uid).addEventListener('input', function(){ clState[key][k].obs=this.value; });
+      row.querySelectorAll('.cl-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-          const picked = this.classList.contains('ok') ? 'ok' : this.classList.contains('nok') ? 'nok' : 'na';
-          state[key].status = picked;
-          row.querySelectorAll('.status-btn').forEach(b => b.classList.remove('selected'));
-          this.classList.add('selected');
-          const of_ = document.getElementById('of_'+key);
-          const oi_ = document.getElementById('oi_'+key);
-          if (picked === 'nok') { of_.classList.add('visible'); }
-          else { of_.classList.remove('visible'); oi_.value = ''; state[key].obs = ''; }
-          saveSession();
+          const s = this.classList.contains('ok')?'ok':this.classList.contains('nok')?'nok':'na';
+          clState[key][k].status = s;
+          row.querySelectorAll('.cl-btn').forEach(b=>b.classList.remove('sel'));
+          this.classList.add('sel');
+          const ow = document.getElementById('ow_'+uid);
+          const oi = document.getElementById('oi_'+uid);
+          if (s==='nok'){ ow.classList.add('show'); }
+          else { ow.classList.remove('show'); oi.value=''; clState[key][k].obs=''; }
         });
       });
     });
-    container.appendChild(card);
+    el.appendChild(card);
   });
 }
 
-function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
 // ══════════════════════════════════════════════
-// SIGNATURE — mobile-safe implementation
-// The key insight: canvas pixel dimensions must match
-// its *rendered* CSS dimensions (getBoundingClientRect),
-// not the wrapper layout dimensions, to avoid coordinate drift.
-// We set pixel dims = CSS dims * devicePixelRatio, then scale ctx.
+// CHECK-IN / CHECK-OUT
 // ══════════════════════════════════════════════
-function initSig(name) {
-  const canvas = document.getElementById('canvas'+name);
-  const ph     = document.getElementById('ph'+name);
-  const ctx    = canvas.getContext('2d');
-  SIG[name].ctx = ctx;
-
-  calibrateSig(name); // set initial size
-
-  function xy(e) {
-    const r = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    // coordinates in CSS pixels (ctx already scaled)
-    return { x: src.clientX - r.left, y: src.clientY - r.top };
-  }
-
-  function onStart(e) {
-    e.preventDefault();
-    SIG[name].drawing = true;
-    const p = xy(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    ph.classList.add('hidden');
-  }
-  function onMove(e) {
-    e.preventDefault();
-    if (!SIG[name].drawing) return;
-    const p = xy(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    SIG[name].hasMark = true;
-  }
-  function onEnd(e) {
-    if (e && e.preventDefault) e.preventDefault();
-    SIG[name].drawing = false;
-    if (SIG[name].hasMark) {
-      SIGS[name] = canvas.toDataURL();
-      saveSession();
-    }
-  }
-
-  canvas.addEventListener('mousedown',  onStart, { passive: false });
-  canvas.addEventListener('mousemove',  onMove,  { passive: false });
-  canvas.addEventListener('mouseup',    onEnd,   { passive: false });
-  canvas.addEventListener('mouseleave', onEnd,   { passive: false });
-  canvas.addEventListener('touchstart', onStart, { passive: false });
-  canvas.addEventListener('touchmove',  onMove,  { passive: false });
-  canvas.addEventListener('touchend',   onEnd,   { passive: false });
+function salvarCheckin() {
+  const zelador = document.getElementById('ciZelador').value.trim();
+  if (!zelador) { toast('Informe o nome do zelador.'); return; }
+  const r = reservas.find(x=>x.id===activeId);
+  if (!r) return;
+  r.ci = { zelador, obs:document.getElementById('ciObs').value, checklist:JSON.parse(JSON.stringify(clState.CI)), sigDataURL:pads.CI.hasMark?document.getElementById('canvasCI').toDataURL():null, ts:Date.now() };
+  r.status = 'checkin';
+  saveReservas();
+  toast('✅ Check-in registrado!');
+  voltarLista();
 }
 
-function calibrateSig(name) {
-  const canvas = document.getElementById('canvas'+name);
-  const wrap   = document.getElementById('wrap'+name);
-  const ctx    = SIG[name].ctx;
-  if (!ctx) return;
-
-  // snapshot current drawing before resize
-  const snap = SIG[name].hasMark ? canvas.toDataURL() : null;
-
-  const dpr = window.devicePixelRatio || 1;
-  const cssW = wrap.clientWidth  || wrap.offsetWidth  || 320;
-  const cssH = wrap.clientHeight || wrap.offsetHeight || 160;
-
-  canvas.width  = cssW * dpr;
-  canvas.height = cssH * dpr;
-
-  // reset transform, then scale for DPR
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.strokeStyle = '#111111';
-  ctx.lineWidth   = 2.5;
-  ctx.lineCap     = 'round';
-  ctx.lineJoin    = 'round';
-
-  // redraw snapshot if existed
-  if (snap) {
-    const img = new Image();
-    img.onload = () => ctx.drawImage(img, 0, 0, cssW, cssH);
-    img.src = snap;
-  }
-}
-
-function clearSig(name) {
-  const canvas = document.getElementById('canvas'+name);
-  const ph     = document.getElementById('ph'+name);
-  const ctx    = SIG[name].ctx;
-  const dpr    = window.devicePixelRatio || 1;
-  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
-  SIG[name].hasMark = false;
-  SIGS[name] = null;
-  ph.classList.remove('hidden');
-  saveSession();
-}
-
-function drawSigFromURL(name, dataURL) {
-  if (!dataURL) return;
-  const canvas = document.getElementById('canvas'+name);
-  const wrap   = document.getElementById('wrap'+name);
-  const ph     = document.getElementById('ph'+name);
-  const ctx    = SIG[name].ctx;
-  SIG[name].hasMark = true;
-  SIGS[name] = dataURL;
-  ph.classList.add('hidden');
-  const cssW = wrap.clientWidth  || 320;
-  const cssH = wrap.clientHeight || 160;
-  const img = new Image();
-  img.onload = () => ctx.drawImage(img, 0, 0, cssW, cssH);
-  img.src = dataURL;
-}
-
-// ══════════════════════════════════════════════
-// PERSISTENCE — localStorage
-// ══════════════════════════════════════════════
-function fields() {
-  return ['espaco','dataEvento','bloco','horaInicio','horaFim',
-          'nomeResp','apartamento','qtdConvidados',
-          'zeladorCheckin','zeladorCheckout','horaCheckout',
-          'obsCheckin','obsCheckout'];
-}
-
-function saveSession() {
-  try {
-    const form = {};
-    fields().forEach(id => { form[id] = document.getElementById(id)?.value || ''; });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      step: STEP,
-      form,
-      ci: JSON.parse(JSON.stringify(CI)),
-      co: JSON.parse(JSON.stringify(CO)),
-      sigs: SIGS,
-      ts: Date.now(),
-    }));
-    flash();
-  } catch(e) {}
-}
-
-function flash() {
-  const b = document.getElementById('saveBadge');
-  b.classList.add('show');
-  clearTimeout(b._t);
-  b._t = setTimeout(() => b.classList.remove('show'), 1800);
-}
-
-function checkSaved() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const d = JSON.parse(raw);
-    if (!d?.form?.nomeResp) return;
-    const age = (Date.now() - d.ts) / 3600000;
-    if (age > 24) { localStorage.removeItem(STORAGE_KEY); return; }
-    document.getElementById('restoreDesc').textContent =
-      `${d.form.nomeResp} — ${d.form.espaco} — ${d.form.dataEvento}`;
-    document.getElementById('restoreBanner').classList.add('show');
-  } catch(e) {}
-}
-
-function restoreSession() {
-  try {
-    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!d) return;
-
-    // form fields
-    fields().forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = d.form[id] || '';
-    });
-
-    // checklist states — merge then rebuild UI
-    Object.assign(CI, d.ci || {});
-    Object.assign(CO, d.co || {});
-    buildChecklist('clIn',  CI, 'ci');
-    buildChecklist('clOut', CO, 'co');
-
-    // signatures
-    if (d.sigs) {
-      Object.assign(SIGS, d.sigs);
-      // delay to let canvases settle in the DOM
-      setTimeout(() => {
-        if (SIGS.A) drawSigFromURL('A', SIGS.A);
-        if (SIGS.B) drawSigFromURL('B', SIGS.B);
-      }, 200);
-    }
-
-    // navigate to saved step
-    const target = d.step || 0;
-    for (let i = 0; i < target; i++) {
-      document.getElementById('si'+i).classList.remove('active');
-      document.getElementById('si'+i).classList.add('done');
-      if (i < 3) document.getElementById('sl'+i).classList.add('done');
-    }
-    document.getElementById('step0').classList.remove('active');
-    STEP = target;
-    document.getElementById('step'+target).classList.add('active');
-    document.getElementById('si'+target).classList.add('active');
-
-    document.getElementById('restoreBanner').classList.remove('show');
-  } catch(e) { alert('Erro ao restaurar. Tente novamente.'); }
-}
-
-function dismissRestore() {
-  document.getElementById('restoreBanner').classList.remove('show');
-  localStorage.removeItem(STORAGE_KEY);
-}
-
-// ══════════════════════════════════════════════
-// SUMMARY
-// ══════════════════════════════════════════════
-function buildSummary() {
-  function row(k, val) {
-    return `<div class="summary-item"><span class="summary-key">${k}</span><span class="summary-val">${val||'—'}</span></div>`;
-  }
-
-  const sr = document.getElementById('sumReserva');
-  sr.innerHTML = '<div class="card-title">📋 Dados da Reserva</div>'
-    + row('Espaço',       v('espaco') || document.getElementById('espaco').value)
-    + row('Data',         document.getElementById('dataEvento').value)
-    + row('Bloco / Apto', (document.getElementById('bloco').value||'?') + ' / ' + document.getElementById('apartamento').value)
-    + row('Horário',      (document.getElementById('horaInicio').value||'—') + ' às ' + (document.getElementById('horaFim').value||'—'))
-    + row('Morador',      document.getElementById('nomeResp').value)
-    + row('Convidados',   document.getElementById('qtdConvidados').value)
-    + row('Zelador in',   document.getElementById('zeladorCheckin').value);
-
-  function occurrences(state, prefix, obs) {
-    const probs = Object.entries(state).filter(([,x])=>x.status==='nok');
-    let html = '';
-    if (!probs.length) html += '<div class="summary-item" style="color:var(--success)">✓ Sem ocorrências</div>';
-    else probs.forEach(([k,x]) => {
-      const label = k.replace(prefix+'|','').replace('|',' › ');
-      html += `<div class="summary-item"><span class="summary-key">${label}</span><span class="summary-val"><span class="badge nok">Dano/Falta</span>${x.obs?' — '+x.obs:''}</span></div>`;
-    });
-    if (obs) html += row('Obs.', obs);
-    return html;
-  }
-
-  document.getElementById('sumCI').innerHTML  = '<div class="card-title">📥 Check-in</div>'  + occurrences(CI, 'ci', document.getElementById('obsCheckin').value);
-  document.getElementById('sumCO').innerHTML  = '<div class="card-title">📤 Check-out</div>' + occurrences(CO, 'co', document.getElementById('obsCheckout').value)
-    + row('Zelador out', document.getElementById('zeladorCheckout').value)
-    + row('Entrega',     document.getElementById('horaCheckout').value);
-
-  document.getElementById('prevA').src = SIG.A.hasMark ? document.getElementById('canvasA').toDataURL() : (SIGS.A || '');
-  document.getElementById('prevB').src = SIG.B.hasMark ? document.getElementById('canvasB').toDataURL() : (SIGS.B || '');
+function salvarCheckout() {
+  const zelador = document.getElementById('coZelador').value.trim();
+  if (!zelador) { toast('Informe o nome do zelador.'); return; }
+  const r = reservas.find(x=>x.id===activeId);
+  if (!r) return;
+  r.co = { zelador, hora:document.getElementById('coHora').value, obs:document.getElementById('coObs').value, checklist:JSON.parse(JSON.stringify(clState.CO)), sigDataURL:pads.CO.hasMark?document.getElementById('canvasCO').toDataURL():null, ts:Date.now() };
+  r.status = 'concluido';
+  saveReservas();
+  enviarWhatsApp(r);
+  voltarLista();
 }
 
 // ══════════════════════════════════════════════
 // WHATSAPP
 // ══════════════════════════════════════════════
-function sendWhatsApp() {
-  const get = id => document.getElementById(id).value;
-  const coProbs = Object.entries(CO).filter(([,x])=>x.status==='nok');
+function enviarWhatsApp(r) {
+  const ciProbs = r.ci ? Object.entries(r.ci.checklist).filter(([,v])=>v.status==='nok') : [];
+  const coProbs = r.co ? Object.entries(r.co.checklist).filter(([,v])=>v.status==='nok') : [];
   let msg = `🏠 *CHECKLIST DE LOCAÇÃO — CONCLUÍDO*\n──────────────────────\n`;
-  msg += `📍 *Espaço:* ${get('espaco')}\n`;
-  msg += `📅 *Data:* ${get('dataEvento')}\n`;
-  msg += `👤 *Morador:* ${get('nomeResp')}\n`;
-  msg += `🏢 *Bloco/Apto:* ${get('bloco')||'?'} / ${get('apartamento')}\n`;
-  msg += `👥 *Convidados:* ${get('qtdConvidados')||'?'}\n`;
-  msg += `🕐 *Entrega:* ${get('horaCheckout')||'—'}\n`;
-  msg += `🛡️ *Zelador (in):* ${get('zeladorCheckin')||'—'}\n`;
-  msg += `🛡️ *Zelador (out):* ${get('zeladorCheckout')||'—'}\n`;
-  msg += `──────────────────────\n`;
-  if (coProbs.length) {
-    msg += `🔴 *OCORRÊNCIAS NO CHECK-OUT:*\n`;
-    coProbs.forEach(([k,x]) => {
-      const label = k.replace('co|','').replace('|',' › ');
-      msg += `  ⚠️ ${label}${x.obs?' — '+x.obs:''}\n`;
-    });
-  } else {
-    msg += `✅ *Sem ocorrências no check-out.*\n`;
+  msg += `📍 *Espaço:* ${r.espaco}\n📅 *Data:* ${fmtData(r.data)}\n`;
+  msg += `👤 *Morador:* ${r.morador}\n🏢 *Apto:* ${r.apto}${r.bloco?' – Bloco '+r.bloco:''}\n`;
+  if(r.convid) msg+=`👥 *Convidados:* ${r.convid}\n`;
+  msg+=`🕐 *Período:* ${r.inicio||'—'} às ${r.fim||'—'}\n──────────────────────\n`;
+  if(r.ci){
+    msg+=`📥 *CHECK-IN — Zelador:* ${r.ci.zelador}\n`;
+    if(ciProbs.length){ msg+=`⚠️ Ocorrências:\n`; ciProbs.forEach(([k,v])=>{ msg+=`  • ${k.split('|')[1]}${v.obs?' — '+v.obs:''}\n`; }); }
+    else msg+=`✅ Sem ocorrências no check-in.\n`;
+    if(r.ci.obs) msg+=`📝 Obs.: ${r.ci.obs}\n`;
+    msg+=`──────────────────────\n`;
   }
-  const obs = get('obsCheckout');
-  if (obs) msg += `📝 *Obs.:* ${obs}\n`;
-  msg += `──────────────────────\n_Registro gerado pelo sistema de checklist._`;
-  window.open(`https://wa.me/${ADM_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+  msg+=`📤 *CHECK-OUT — Zelador:* ${r.co.zelador}\n`;
+  if(r.co.hora) msg+=`🕐 *Entrega:* ${r.co.hora}\n`;
+  if(coProbs.length){ msg+=`🔴 *Ocorrências:*\n`; coProbs.forEach(([k,v])=>{ msg+=`  ⚠️ ${k.split('|')[1]}${v.obs?' — '+v.obs:''}\n`; }); }
+  else msg+=`✅ Sem ocorrências no check-out.\n`;
+  if(r.co.obs) msg+=`📝 Obs.: ${r.co.obs}\n`;
+  msg+=`──────────────────────\n_Gerado pelo sistema de checklist._`;
+  window.open(`https://wa.me/${ADM_WHATSAPP}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
-function novaReserva() {
-  if (!confirm('Iniciar novo registro? Os dados atuais serão apagados.')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  location.reload();
+// ══════════════════════════════════════════════
+// CANVAS — assinatura (resolução fixa + mapeamento proporcional)
+// ══════════════════════════════════════════════
+function initCanvas(name) {
+  const canvas = document.getElementById('canvas'+name);
+  const hint   = document.getElementById('hint'+name);
+  canvas.width=700; canvas.height=220;
+  const ctx=canvas.getContext('2d');
+  ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
+  pads[name].ctx=ctx;
+  let drawing=false;
+
+  function xy(e){
+    const r=canvas.getBoundingClientRect();
+    const src=e.touches?e.touches[0]:e;
+    return { x:(src.clientX-r.left)*(700/r.width), y:(src.clientY-r.top)*(220/r.height) };
+  }
+  function down(e){ e.preventDefault(); drawing=true; const p=xy(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); hint.classList.add('hide'); }
+  function move(e){ e.preventDefault(); if(!drawing)return; const p=xy(e); ctx.lineTo(p.x,p.y); ctx.stroke(); pads[name].hasMark=true; document.getElementById('sig'+name).classList.add('signed'); }
+  function up(e){ if(e)e.preventDefault(); drawing=false; }
+
+  canvas.addEventListener('mousedown', down,{passive:false});
+  canvas.addEventListener('mousemove', move,{passive:false});
+  canvas.addEventListener('mouseup',   up,  {passive:false});
+  canvas.addEventListener('mouseleave',up,  {passive:false});
+  canvas.addEventListener('touchstart',down,{passive:false});
+  canvas.addEventListener('touchmove', move,{passive:false});
+  canvas.addEventListener('touchend',  up,  {passive:false});
+}
+
+function clearCanvas(name){
+  const c=document.getElementById('canvas'+name);
+  pads[name].ctx.clearRect(0,0,c.width,c.height);
+  pads[name].hasMark=false;
+  document.getElementById('sig'+name).classList.remove('signed');
+  document.getElementById('hint'+name).classList.remove('hide');
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function labelStatus(s){ return s==='pendente'?'Pendente':s==='checkin'?'Check-in feito':'Concluído'; }
+function fmtData(iso){ if(!iso)return'—'; const[y,m,d]=iso.split('-'); return`${d}/${m}/${y}`; }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function toast(msg,dur=2500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),dur);
 }
 </script>
 </body>
